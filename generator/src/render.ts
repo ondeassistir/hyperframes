@@ -18,6 +18,7 @@ export async function renderMatch(match: MatchRow): Promise<string> {
   const job = createRenderJob({
     fps: 30,
     quality: "standard",
+    workers: 1,
   });
 
   await executeRenderJob(job, projectDir, outputPath, (progress) => {

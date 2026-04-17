@@ -1,402 +1,445 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8" />
-  <title>{{HOME_TEAM}} x {{AWAY_TEAM}}</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&display=swap');
+  <head>
+    <meta charset="UTF-8" />
+    <title>{{HOME_TEAM}} x {{AWAY_TEAM}}</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&display=swap");
 
-    @property --border-angle {
-      syntax: '<angle>';
-      inherits: false;
-      initial-value: 0deg;
-    }
+      @property --border-angle {
+        syntax: "<angle>";
+        inherits: false;
+        initial-value: 0deg;
+      }
 
-    @keyframes border-spin {
-      to { --border-angle: 360deg; }
-    }
-    @keyframes fade-in {
-      from { opacity: 0; transform: translateY(16px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes slide-from-left {
-      from { opacity: 0; transform: translateX(-48px); }
-      to   { opacity: 1; transform: translateX(0); }
-    }
-    @keyframes slide-from-right {
-      from { opacity: 0; transform: translateX(48px); }
-      to   { opacity: 1; transform: translateX(0); }
-    }
-    @keyframes pop-in {
-      from { opacity: 0; transform: scale(0.6); }
-      to   { opacity: 1; transform: scale(1); }
-    }
+      @keyframes border-spin {
+        to {
+          --border-angle: 360deg;
+        }
+      }
+      @keyframes fade-in {
+        from {
+          opacity: 0;
+          transform: translateY(16px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes slide-from-left {
+        from {
+          opacity: 0;
+          transform: translateX(-48px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+      @keyframes slide-from-right {
+        from {
+          opacity: 0;
+          transform: translateX(48px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+      @keyframes pop-in {
+        from {
+          opacity: 0;
+          transform: scale(0.6);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
 
-    html, body {
-      width: 1080px;
-      height: 1920px;
-      overflow: hidden;
-      font-family: 'Sora', sans-serif;
-      color: hsl(210 40% 98%);
-      background: hsl(215 28% 7%);
-    }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: hsl(215 28% 7%);
+      }
 
-    body {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
+      [data-composition-id="match-reel"] {
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-family: "Sora", sans-serif;
+        color: hsl(210 40% 98%);
+        background: hsl(215 28% 7%);
+      }
 
-    /* Subtle purple glow at top, deeper dark at bottom */
-    .bg {
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(ellipse 900px 480px at 50% -40px,
-          hsl(270 100% 50% / 0.13) 0%, transparent 70%),
-        linear-gradient(180deg, hsl(215 28% 7%) 0%, hsl(215 28% 5%) 100%);
-      z-index: 0;
-    }
+      /* Subtle purple glow at top, deeper dark at bottom */
+      .bg {
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(
+            ellipse 900px 480px at 50% -40px,
+            hsl(270 100% 50% / 0.13) 0%,
+            transparent 70%
+          ),
+          linear-gradient(180deg, hsl(215 28% 7%) 0%, hsl(215 28% 5%) 100%);
+        z-index: 0;
+      }
 
-    .layout {
-      position: relative;
-      z-index: 1;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 88px 64px 80px;
-    }
+      .layout {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 88px 64px 80px;
+      }
 
-    /* ── Header: OA logo | league logo | round ── */
-    .header {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 68px;
-      animation: fade-in 0.4s ease-out both;
-    }
+      /* ── Header: OA logo | league logo | round ── */
+      .header {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 68px;
+        animation: fade-in 0.4s ease-out both;
+      }
 
-    .oa-logo {
-      height: 48px;
-      width: auto;
-    }
+      .oa-logo {
+        height: 48px;
+        width: auto;
+      }
 
-    .header-center {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
+      .header-center {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
 
-    .league-logo {
-      height: 52px;
-      width: 52px;
-      object-fit: contain;
-    }
+      .league-logo {
+        height: 52px;
+        width: 52px;
+        object-fit: contain;
+      }
 
-    .round-pill {
-      font-size: 26px;
-      font-weight: 600;
-      color: hsl(215 20% 65%);
-      background: hsl(215 25% 14%);
-      border: 1px solid hsl(215 25% 20%);
-      padding: 12px 32px;
-      border-radius: 999px;
-      letter-spacing: 0.5px;
-    }
+      .round-pill {
+        font-size: 26px;
+        font-weight: 600;
+        color: hsl(215 20% 65%);
+        background: hsl(215 25% 14%);
+        border: 1px solid hsl(215 25% 20%);
+        padding: 12px 32px;
+        border-radius: 999px;
+        letter-spacing: 0.5px;
+      }
 
-    /* ── Match card with animated conic border ── */
-    .match-card {
-      width: 952px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 72px 56px 80px;
-      gap: 52px;
-      border-radius: 12px;
-      border: 1.5px solid transparent;
-      background:
-        linear-gradient(hsl(215 25% 10%), hsl(215 25% 10%)) padding-box,
-        conic-gradient(
-          from var(--border-angle),
-          hsl(270 100% 50% / 18%),
-          hsl(270 100% 68%),
-          hsl(239 84% 67%),
-          hsl(270 100% 50% / 18%)
-        ) border-box;
-      animation:
-        border-spin 7s linear infinite,
-        fade-in 0.45s ease-out 0.15s both;
-    }
+      /* ── Match card with animated conic border ── */
+      .match-card {
+        width: 952px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 72px 56px 80px;
+        gap: 52px;
+        border-radius: 12px;
+        border: 1.5px solid transparent;
+        background:
+          linear-gradient(hsl(215 25% 10%), hsl(215 25% 10%)) padding-box,
+          conic-gradient(
+              from var(--border-angle),
+              hsl(270 100% 50% / 18%),
+              hsl(270 100% 68%),
+              hsl(239 84% 67%),
+              hsl(270 100% 50% / 18%)
+            )
+            border-box;
+        animation:
+          border-spin 7s linear infinite,
+          fade-in 0.45s ease-out 0.15s both;
+      }
 
-    .upcoming-label {
-      font-size: 22px;
-      font-weight: 600;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: hsl(270 100% 70%);
-    }
+      .upcoming-label {
+        font-size: 22px;
+        font-weight: 600;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        color: hsl(270 100% 70%);
+      }
 
-    /* ── Teams row ── */
-    .teams {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      width: 100%;
-      gap: 24px;
-    }
+      /* ── Teams row ── */
+      .teams {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        gap: 24px;
+      }
 
-    .team {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 28px;
-      flex: 1;
-    }
+      .team {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 28px;
+        flex: 1;
+      }
 
-    .team.home { animation: slide-from-left 0.5s ease-out 0.45s both; }
-    .team.away { animation: slide-from-right 0.5s ease-out 0.45s both; }
+      .team.home {
+        animation: slide-from-left 0.5s ease-out 0.45s both;
+      }
+      .team.away {
+        animation: slide-from-right 0.5s ease-out 0.45s both;
+      }
 
-    .logo-ring {
-      width: 232px;
-      height: 232px;
-      border-radius: 50%;
-      background: hsl(215 25% 13%);
-      border: 2px solid hsl(215 25% 22%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
+      .logo-ring {
+        width: 232px;
+        height: 232px;
+        border-radius: 50%;
+        background: hsl(215 25% 13%);
+        border: 2px solid hsl(215 25% 22%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
 
-    .logo-ring img {
-      width: 168px;
-      height: 168px;
-      object-fit: contain;
-    }
+      .logo-ring img {
+        width: 168px;
+        height: 168px;
+        object-fit: contain;
+      }
 
-    .team-name {
-      font-size: 38px;
-      font-weight: 700;
-      text-align: center;
-      line-height: 1.2;
-      color: hsl(210 40% 98%);
-      max-width: 260px;
-    }
+      .team-name {
+        font-size: 38px;
+        font-weight: 700;
+        text-align: center;
+        line-height: 1.2;
+        color: hsl(210 40% 98%);
+        max-width: 260px;
+      }
 
-    /* ── VS ── */
-    .vs-block {
-      display: flex;
-      align-items: center;
-      flex-shrink: 0;
-      animation: pop-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0.65s both;
-    }
+      /* ── VS ── */
+      .vs-block {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+        animation: pop-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0.65s both;
+      }
 
-    .vs-text {
-      font-size: 56px;
-      font-weight: 700;
-      color: hsl(270 100% 62%);
-      line-height: 1;
-    }
+      .vs-text {
+        font-size: 56px;
+        font-weight: 700;
+        color: hsl(270 100% 62%);
+        line-height: 1;
+      }
 
-    /* ── Kickoff ── */
-    .kickoff {
-      margin-top: 56px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-      animation: fade-in 0.4s ease-out 0.85s both;
-    }
+      /* ── Kickoff ── */
+      .kickoff {
+        margin-top: 56px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        animation: fade-in 0.4s ease-out 0.85s both;
+      }
 
-    .kickoff-date {
-      font-size: 34px;
-      font-weight: 500;
-      color: hsl(215 20% 65%);
-    }
+      .kickoff-date {
+        font-size: 34px;
+        font-weight: 500;
+        color: hsl(215 20% 65%);
+      }
 
-    .kickoff-time {
-      font-size: 72px;
-      font-weight: 700;
-      color: hsl(210 40% 98%);
-      letter-spacing: -1px;
-      line-height: 1;
-    }
+      .kickoff-time {
+        font-size: 72px;
+        font-weight: 700;
+        color: hsl(210 40% 98%);
+        letter-spacing: -1px;
+        line-height: 1;
+      }
 
-    .kickoff-tz {
-      font-size: 24px;
-      font-weight: 400;
-      color: hsl(215 20% 50%);
-    }
+      .kickoff-tz {
+        font-size: 24px;
+        font-weight: 400;
+        color: hsl(215 20% 50%);
+      }
 
-    /* ── Broadcast channels ── */
-    .channels-section {
-      margin-top: 60px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 28px;
-      animation: fade-in 0.4s ease-out 1.05s both;
-    }
+      /* ── Broadcast channels ── */
+      .channels-section {
+        margin-top: 60px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 28px;
+        animation: fade-in 0.4s ease-out 1.05s both;
+      }
 
-    .channels-label {
-      font-size: 24px;
-      font-weight: 500;
-      color: hsl(215 20% 50%);
-      text-transform: uppercase;
-      letter-spacing: 3px;
-    }
+      .channels-label {
+        font-size: 24px;
+        font-weight: 500;
+        color: hsl(215 20% 50%);
+        text-transform: uppercase;
+        letter-spacing: 3px;
+      }
 
-    .channels-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 24px;
-      justify-content: center;
-      align-items: center;
-    }
+      .channels-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 24px;
+        justify-content: center;
+        align-items: center;
+      }
 
-    .channel-item {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: hsl(215 25% 14%);
-      border: 1px solid hsl(215 25% 22%);
-      border-radius: 16px;
-      padding: 16px 28px;
-    }
+      .channel-item {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: hsl(215 25% 14%);
+        border: 1px solid hsl(215 25% 22%);
+        border-radius: 16px;
+        padding: 16px 28px;
+      }
 
-    /* Logo-based channel (has image) */
-    .channel-logo {
-      height: 52px;
-      width: auto;
-      max-width: 200px;
-      object-fit: contain;
-    }
+      /* Logo-based channel (has image) */
+      .channel-logo {
+        height: 52px;
+        width: auto;
+        max-width: 200px;
+        object-fit: contain;
+      }
 
-    /* Text fallback when no logo */
-    .channel-name {
-      font-size: 28px;
-      font-weight: 600;
-      color: hsl(210 40% 98%);
-    }
+      /* Text fallback when no logo */
+      .channel-name {
+        font-size: 28px;
+        font-weight: 600;
+        color: hsl(210 40% 98%);
+      }
 
-    /* ── Footer branding ── */
-    .footer {
-      margin-top: auto;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 18px;
-      animation: fade-in 0.4s ease-out 1.2s both;
-    }
+      /* ── Footer branding ── */
+      .footer {
+        margin-top: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 18px;
+        animation: fade-in 0.4s ease-out 1.2s both;
+      }
 
-    .divider {
-      width: 100px;
-      height: 1px;
-      background: hsl(215 25% 20%);
-      margin-bottom: 8px;
-    }
+      .divider {
+        width: 100px;
+        height: 1px;
+        background: hsl(215 25% 20%);
+        margin-bottom: 8px;
+      }
 
-    .footer-logo {
-      height: 52px;
-      width: auto;
-      opacity: 0.85;
-    }
+      .footer-logo {
+        height: 52px;
+        width: auto;
+        opacity: 0.85;
+      }
 
-    .footer-tagline {
-      font-size: 26px;
-      font-weight: 400;
-      color: hsl(215 20% 50%);
-    }
+      .footer-tagline {
+        font-size: 26px;
+        font-weight: 400;
+        color: hsl(215 20% 50%);
+      }
 
-    .footer-url {
-      font-size: 30px;
-      font-weight: 600;
-      color: hsl(270 100% 68%);
-    }
-  </style>
-</head>
-<body data-duration="12" data-fps="30" data-width="1080" data-height="1920">
+      .footer-url {
+        font-size: 30px;
+        font-weight: 600;
+        color: hsl(270 100% 68%);
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      data-composition-id="match-reel"
+      data-duration="12"
+      data-fps="30"
+      data-width="1080"
+      data-height="1920"
+    >
+      <div class="bg"></div>
 
-  <div class="bg"></div>
-
-  <div class="layout">
-
-    <!-- Header: OA logo | league | round -->
-    <header class="header">
-      <img
-        class="oa-logo"
-        src="https://img.ondeassistir.tv/images-scr/favicon/favicon.svg"
-        alt="Onde Assistir"
-      />
-      <div class="header-center">
-        <img
-          class="league-logo"
-          src="{{LEAGUE_LOGO_URL}}"
-          alt="Liga"
-        />
-      </div>
-      <span class="round-pill">{{ROUND}}</span>
-    </header>
-
-    <!-- Match card -->
-    <div class="match-card">
-      <span class="upcoming-label">Próxima Partida</span>
-
-      <div class="teams">
-        <div class="team home">
-          <div class="logo-ring">
-            <img src="{{HOME_LOGO_URL}}" alt="{{HOME_TEAM}}" />
+      <div class="layout">
+        <!-- Header: OA logo | league | round -->
+        <header class="header">
+          <img
+            class="oa-logo"
+            src="https://img.ondeassistir.tv/images-scr/favicon/favicon.svg"
+            alt="Onde Assistir"
+          />
+          <div class="header-center">
+            <img class="league-logo" src="{{LEAGUE_LOGO_URL}}" alt="Liga" />
           </div>
-          <span class="team-name">{{HOME_TEAM}}</span>
-        </div>
+          <span class="round-pill">{{ROUND}}</span>
+        </header>
 
-        <div class="vs-block">
-          <span class="vs-text">VS</span>
-        </div>
+        <!-- Match card -->
+        <div class="match-card">
+          <span class="upcoming-label">Próxima Partida</span>
 
-        <div class="team away">
-          <div class="logo-ring">
-            <img src="{{AWAY_LOGO_URL}}" alt="{{AWAY_TEAM}}" />
+          <div class="teams">
+            <div class="team home">
+              <div class="logo-ring">
+                <img src="{{HOME_LOGO_URL}}" alt="{{HOME_TEAM}}" />
+              </div>
+              <span class="team-name">{{HOME_TEAM}}</span>
+            </div>
+
+            <div class="vs-block">
+              <span class="vs-text">VS</span>
+            </div>
+
+            <div class="team away">
+              <div class="logo-ring">
+                <img src="{{AWAY_LOGO_URL}}" alt="{{AWAY_TEAM}}" />
+              </div>
+              <span class="team-name">{{AWAY_TEAM}}</span>
+            </div>
           </div>
-          <span class="team-name">{{AWAY_TEAM}}</span>
         </div>
+
+        <!-- Kickoff date & time -->
+        <div class="kickoff">
+          <span class="kickoff-date">{{KICKOFF_DATE}}</span>
+          <span class="kickoff-time">{{KICKOFF_TIME}}</span>
+          <span class="kickoff-tz">Horário de Brasília</span>
+        </div>
+
+        <!-- Broadcast channels -->
+        <div class="channels-section">
+          <span class="channels-label">Onde Assistir</span>
+          <div class="channels-row">{{CHANNELS_HTML}}</div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+          <div class="divider"></div>
+          <img
+            class="footer-logo"
+            src="https://img.ondeassistir.tv/images-scr/favicon/favicon.svg"
+            alt="Onde Assistir"
+          />
+          <span class="footer-tagline">Saiba onde assistir ao jogo</span>
+          <span class="footer-url">ondeassistir.tv</span>
+        </footer>
       </div>
     </div>
-
-    <!-- Kickoff date & time -->
-    <div class="kickoff">
-      <span class="kickoff-date">{{KICKOFF_DATE}}</span>
-      <span class="kickoff-time">{{KICKOFF_TIME}}</span>
-      <span class="kickoff-tz">Horário de Brasília</span>
-    </div>
-
-    <!-- Broadcast channels -->
-    <div class="channels-section">
-      <span class="channels-label">Onde Assistir</span>
-      <div class="channels-row">
-        {{CHANNELS_HTML}}
-      </div>
-    </div>
-
-    <!-- Footer -->
-    <footer class="footer">
-      <div class="divider"></div>
-      <img
-        class="footer-logo"
-        src="https://img.ondeassistir.tv/images-scr/favicon/favicon.svg"
-        alt="Onde Assistir"
-      />
-      <span class="footer-tagline">Saiba onde assistir ao jogo</span>
-      <span class="footer-url">ondeassistir.tv</span>
-    </footer>
-
-  </div>
-
-</body>
+    <!-- /data-composition-id="match-reel" -->
+  </body>
 </html>
