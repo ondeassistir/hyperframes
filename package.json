@@ -6,7 +6,8 @@
     "url": "https://github.com/heygen-com/hyperframes"
   },
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "generator"
   ],
   "type": "module",
   "scripts": {

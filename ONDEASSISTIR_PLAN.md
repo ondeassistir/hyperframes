@@ -86,16 +86,16 @@ Create `generator/src/brand.css` — this file will be injected into every compo
 /* generator/src/brand.css */
 :root {
   /* Replace with values from OndeAssistir_Style_Guide.md */
-  --brand-primary:   #REPLACE_ME;   /* main brand color */
-  --brand-secondary: #REPLACE_ME;   /* secondary */
-  --brand-accent:    #REPLACE_ME;   /* CTA / highlight */
-  --brand-bg:        #REPLACE_ME;   /* background */
-  --brand-text:      #REPLACE_ME;   /* body text */
-  --brand-text-inv:  #REPLACE_ME;   /* text on dark bg */
+  --brand-primary: #REPLACE_ME; /* main brand color */
+  --brand-secondary: #REPLACE_ME; /* secondary */
+  --brand-accent: #REPLACE_ME; /* CTA / highlight */
+  --brand-bg: #REPLACE_ME; /* background */
+  --brand-text: #REPLACE_ME; /* body text */
+  --brand-text-inv: #REPLACE_ME; /* text on dark bg */
 
-  --brand-font-display: 'REPLACE_ME', sans-serif;
-  --brand-font-body:    'REPLACE_ME', sans-serif;
-  --brand-radius:       8px;
+  --brand-font-display: "REPLACE_ME", sans-serif;
+  --brand-font-body: "REPLACE_ME", sans-serif;
+  --brand-radius: 8px;
 }
 ```
 
@@ -107,17 +107,17 @@ Create `generator/src/brand.css` — this file will be injected into every compo
 Browse https://hyperframes.heygen.com/catalog/blocks/ and decide which block(s)
 to adapt for match cards. Likely candidates:
 
-| Block | Use case |
-|-------|----------|
-| `logo-outro` | End card with OndeAssistir logo |
-| `data-chart` | Stats/standings if needed |
+| Block           | Use case                        |
+| --------------- | ------------------------------- |
+| `logo-outro`    | End card with OndeAssistir logo |
+| `data-chart`    | Stats/standings if needed       |
 | Social overlays | Quick team name + kickoff badge |
 
 - [ ] Install chosen blocks:
   ```bash
   npx tsx packages/cli/src/cli.ts add <block-name>
   ```
-- [ ] Note chosen block names here: _____________
+- [ ] Note chosen block names here: **\*\***\_**\*\***
 
 ---
 
@@ -164,62 +164,55 @@ Create `generator/src/templates/match-reel.html`:
 ```html
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=1080, initial-scale=1" />
-  <title>{{HOME_TEAM}} vs {{AWAY_TEAM}}</title>
-  <link rel="stylesheet" href="../brand.css" />
-  <style>
-    body {
-      width: 1080px;
-      height: 1920px;
-      background: var(--brand-bg);
-      font-family: var(--brand-font-body);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      margin: 0;
-      overflow: hidden;
-    }
-    /* Add match card layout here after branding is confirmed */
-  </style>
-</head>
-<body
-  data-duration="10"
-  data-fps="30"
-  data-width="1080"
-  data-height="1920"
->
-  <!-- Round label -->
-  <div class="round">{{ROUND}}</div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, initial-scale=1" />
+    <title>{{HOME_TEAM}} vs {{AWAY_TEAM}}</title>
+    <link rel="stylesheet" href="../brand.css" />
+    <style>
+      body {
+        width: 1080px;
+        height: 1920px;
+        background: var(--brand-bg);
+        font-family: var(--brand-font-body);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin: 0;
+        overflow: hidden;
+      }
+      /* Add match card layout here after branding is confirmed */
+    </style>
+  </head>
+  <body data-duration="10" data-fps="30" data-width="1080" data-height="1920">
+    <!-- Round label -->
+    <div class="round">{{ROUND}}</div>
 
-  <!-- Home team -->
-  <div class="team home">
-    <img src="{{HOME_LOGO_URL}}" alt="{{HOME_TEAM}}" />
-    <span>{{HOME_TEAM}}</span>
-  </div>
+    <!-- Home team -->
+    <div class="team home">
+      <img src="{{HOME_LOGO_URL}}" alt="{{HOME_TEAM}}" />
+      <span>{{HOME_TEAM}}</span>
+    </div>
 
-  <!-- VS separator -->
-  <div class="vs">VS</div>
+    <!-- VS separator -->
+    <div class="vs">VS</div>
 
-  <!-- Away team -->
-  <div class="team away">
-    <img src="{{AWAY_LOGO_URL}}" alt="{{AWAY_TEAM}}" />
-    <span>{{AWAY_TEAM}}</span>
-  </div>
+    <!-- Away team -->
+    <div class="team away">
+      <img src="{{AWAY_LOGO_URL}}" alt="{{AWAY_TEAM}}" />
+      <span>{{AWAY_TEAM}}</span>
+    </div>
 
-  <!-- Kickoff -->
-  <div class="kickoff">{{KICKOFF_DATE}} · {{KICKOFF_TIME}}</div>
+    <!-- Kickoff -->
+    <div class="kickoff">{{KICKOFF_DATE}} · {{KICKOFF_TIME}}</div>
 
-  <!-- Broadcast channels -->
-  <div class="channels">
-    {{#CHANNELS}}<span class="channel">{{.}}</span>{{/CHANNELS}}
-  </div>
+    <!-- Broadcast channels -->
+    <div class="channels">{{#CHANNELS}}<span class="channel">{{.}}</span>{{/CHANNELS}}</div>
 
-  <!-- OndeAssistir logo -->
-  <img class="brand-logo" src="../assets/logo.svg" alt="OndeAssistir" />
-</body>
+    <!-- OndeAssistir logo -->
+    <img class="brand-logo" src="../assets/logo.svg" alt="OndeAssistir" />
+  </body>
 </html>
 ```
 
@@ -232,48 +225,49 @@ Create `generator/src/templates/match-reel.html`:
 Create `generator/src/compose.ts` — fills the template with real match data:
 
 ```typescript
-import { readFileSync } from 'fs'
-import { join, dirname } from 'path'
-import { fileURLToPath } from 'url'
+import { readFileSync } from "fs";
+import { join, dirname } from "path";
+import { fileURLToPath } from "url";
 
-const __dir = dirname(fileURLToPath(import.meta.url))
-const template = readFileSync(
-  join(__dir, 'templates/match-reel.html'),
-  'utf-8'
-)
+const __dir = dirname(fileURLToPath(import.meta.url));
+const template = readFileSync(join(__dir, "templates/match-reel.html"), "utf-8");
 
 export interface Match {
-  id: string
-  home_team: string
-  away_team: string
-  home_logo_url: string
-  away_logo_url: string
-  kickoff_at: string        // ISO timestamp from Supabase
-  round: string
-  channels: string[]        // e.g. ['SporTV', 'Globo']
+  id: string;
+  home_team: string;
+  away_team: string;
+  home_logo_url: string;
+  away_logo_url: string;
+  kickoff_at: string; // ISO timestamp from Supabase
+  round: string;
+  channels: string[]; // e.g. ['SporTV', 'Globo']
 }
 
 export function composeMatchHtml(match: Match): string {
-  const kickoff = new Date(match.kickoff_at)
-  const date = kickoff.toLocaleDateString('pt-BR', {
-    weekday: 'long', day: 'numeric', month: 'long'
-  })
-  const time = kickoff.toLocaleTimeString('pt-BR', {
-    hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo'
-  })
+  const kickoff = new Date(match.kickoff_at);
+  const date = kickoff.toLocaleDateString("pt-BR", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+  });
+  const time = kickoff.toLocaleTimeString("pt-BR", {
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: "America/Sao_Paulo",
+  });
 
   return template
-    .replaceAll('{{HOME_TEAM}}',     match.home_team)
-    .replaceAll('{{AWAY_TEAM}}',     match.away_team)
-    .replaceAll('{{HOME_LOGO_URL}}', match.home_logo_url)
-    .replaceAll('{{AWAY_LOGO_URL}}', match.away_logo_url)
-    .replaceAll('{{ROUND}}',         match.round)
-    .replaceAll('{{KICKOFF_DATE}}',  date)
-    .replaceAll('{{KICKOFF_TIME}}',  time)
+    .replaceAll("{{HOME_TEAM}}", match.home_team)
+    .replaceAll("{{AWAY_TEAM}}", match.away_team)
+    .replaceAll("{{HOME_LOGO_URL}}", match.home_logo_url)
+    .replaceAll("{{AWAY_LOGO_URL}}", match.away_logo_url)
+    .replaceAll("{{ROUND}}", match.round)
+    .replaceAll("{{KICKOFF_DATE}}", date)
+    .replaceAll("{{KICKOFF_TIME}}", time)
     .replace(
       /\{\{#CHANNELS\}\}(.+?)\{\{\/CHANNELS\}\}/s,
-      match.channels.map(ch => `<span class="channel">${ch}</span>`).join('\n')
-    )
+      match.channels.map((ch) => `<span class="channel">${ch}</span>`).join("\n"),
+    );
 }
 ```
 
@@ -319,24 +313,25 @@ DAYS_AHEAD=1
 Create `generator/src/supabase.ts`:
 
 ```typescript
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from "@supabase/supabase-js";
 
-const url  = process.env.SUPABASE_URL!
-const key  = process.env.SUPABASE_SERVICE_KEY!
+const url = process.env.SUPABASE_URL!;
+const key = process.env.SUPABASE_SERVICE_KEY!;
 
-export const db = createClient(url, key)
+export const db = createClient(url, key);
 
 export async function fetchTodayMatches(): Promise<any[]> {
-  const daysAhead = Number(process.env.DAYS_AHEAD ?? 1)
-  const from = new Date()
-  from.setHours(0, 0, 0, 0)
-  const to = new Date(from)
-  to.setDate(to.getDate() + daysAhead)
-  to.setHours(23, 59, 59, 999)
+  const daysAhead = Number(process.env.DAYS_AHEAD ?? 1);
+  const from = new Date();
+  from.setHours(0, 0, 0, 0);
+  const to = new Date(from);
+  to.setDate(to.getDate() + daysAhead);
+  to.setHours(23, 59, 59, 999);
 
   const { data, error } = await db
-    .from('matches')                    // ← adjust table name
-    .select(`
+    .from("matches") // ← adjust table name
+    .select(
+      `
       id,
       home_team,
       away_team,
@@ -345,21 +340,22 @@ export async function fetchTodayMatches(): Promise<any[]> {
       kickoff_at,
       round,
       channels
-    `)
-    .gte('kickoff_at', from.toISOString())
-    .lte('kickoff_at', to.toISOString())
-    .order('kickoff_at', { ascending: true })
+    `,
+    )
+    .gte("kickoff_at", from.toISOString())
+    .lte("kickoff_at", to.toISOString())
+    .order("kickoff_at", { ascending: true });
 
-  if (error) throw error
-  return data ?? []
+  if (error) throw error;
+  return data ?? [];
 }
 
 export async function saveVideoUrl(matchId: string, videoUrl: string) {
   const { error } = await db
-    .from('matches')
+    .from("matches")
     .update({ reel_url: videoUrl, reel_generated_at: new Date().toISOString() })
-    .eq('id', matchId)
-  if (error) throw error
+    .eq("id", matchId);
+  if (error) throw error;
 }
 ```
 
@@ -371,17 +367,17 @@ export async function saveVideoUrl(matchId: string, videoUrl: string) {
 
 Your `matches` table needs at minimum:
 
-| Column | Type | Notes |
-|--------|------|-------|
-| `id` | uuid / text | Primary key |
-| `home_team` | text | |
-| `away_team` | text | |
-| `home_logo_url` | text | Public URL to team logo image |
-| `away_logo_url` | text | Public URL to team logo image |
-| `kickoff_at` | timestamptz | Stored in UTC |
-| `round` | text | e.g. "Rodada 12" |
-| `channels` | text[] | e.g. `{Globo, SporTV}` |
-| `reel_url` | text | Populated after render (nullable) |
+| Column              | Type        | Notes                             |
+| ------------------- | ----------- | --------------------------------- |
+| `id`                | uuid / text | Primary key                       |
+| `home_team`         | text        |                                   |
+| `away_team`         | text        |                                   |
+| `home_logo_url`     | text        | Public URL to team logo image     |
+| `away_logo_url`     | text        | Public URL to team logo image     |
+| `kickoff_at`        | timestamptz | Stored in UTC                     |
+| `round`             | text        | e.g. "Rodada 12"                  |
+| `channels`          | text[]      | e.g. `{Globo, SporTV}`            |
+| `reel_url`          | text        | Populated after render (nullable) |
 | `reel_generated_at` | timestamptz | Populated after render (nullable) |
 
 - [ ] All columns confirmed / missing ones added via Supabase migration
@@ -397,26 +393,26 @@ Wire compose + render + upload together.
 Create `generator/src/render.ts`:
 
 ```typescript
-import { writeFileSync, mkdirSync } from 'fs'
-import { join, dirname } from 'path'
-import { fileURLToPath } from 'url'
-import { tmpdir } from 'os'
-import { createRenderJob, executeRenderJob } from '@hyperframes/producer'
-import type { Match } from './compose.js'
-import { composeMatchHtml } from './compose.js'
+import { writeFileSync, mkdirSync } from "fs";
+import { join, dirname } from "path";
+import { fileURLToPath } from "url";
+import { tmpdir } from "os";
+import { createRenderJob, executeRenderJob } from "@hyperframes/producer";
+import type { Match } from "./compose.js";
+import { composeMatchHtml } from "./compose.js";
 
-const __dir = dirname(fileURLToPath(import.meta.url))
+const __dir = dirname(fileURLToPath(import.meta.url));
 
 export async function renderMatch(match: Match): Promise<string> {
-  const html = composeMatchHtml(match)
+  const html = composeMatchHtml(match);
 
   // Write HTML to a temp file
-  const tmpDir = join(tmpdir(), `hf-${match.id}`)
-  mkdirSync(tmpDir, { recursive: true })
-  const htmlPath = join(tmpDir, 'index.html')
-  writeFileSync(htmlPath, html)
+  const tmpDir = join(tmpdir(), `hf-${match.id}`);
+  mkdirSync(tmpDir, { recursive: true });
+  const htmlPath = join(tmpDir, "index.html");
+  writeFileSync(htmlPath, html);
 
-  const outputPath = join(tmpDir, 'output.mp4')
+  const outputPath = join(tmpDir, "output.mp4");
 
   const job = createRenderJob({
     input: htmlPath,
@@ -424,12 +420,12 @@ export async function renderMatch(match: Match): Promise<string> {
     width: 1080,
     height: 1920,
     fps: 30,
-    quality: 'standard',    // draft | standard | high
-  })
+    quality: "standard", // draft | standard | high
+  });
 
-  await executeRenderJob(job)
+  await executeRenderJob(job);
 
-  return outputPath  // caller uploads this file
+  return outputPath; // caller uploads this file
 }
 ```
 
@@ -441,29 +437,24 @@ export async function renderMatch(match: Match): Promise<string> {
 Create `generator/src/upload.ts`:
 
 ```typescript
-import { readFileSync } from 'fs'
-import { db } from './supabase.js'
+import { readFileSync } from "fs";
+import { db } from "./supabase.js";
 
-const BUCKET = process.env.SUPABASE_STORAGE_BUCKET ?? 'match-videos'
+const BUCKET = process.env.SUPABASE_STORAGE_BUCKET ?? "match-videos";
 
-export async function uploadVideo(
-  matchId: string,
-  filePath: string
-): Promise<string> {
-  const fileBuffer = readFileSync(filePath)
-  const storagePath = `reels/${matchId}.mp4`
+export async function uploadVideo(matchId: string, filePath: string): Promise<string> {
+  const fileBuffer = readFileSync(filePath);
+  const storagePath = `reels/${matchId}.mp4`;
 
-  const { error } = await db.storage
-    .from(BUCKET)
-    .upload(storagePath, fileBuffer, {
-      contentType: 'video/mp4',
-      upsert: true,
-    })
+  const { error } = await db.storage.from(BUCKET).upload(storagePath, fileBuffer, {
+    contentType: "video/mp4",
+    upsert: true,
+  });
 
-  if (error) throw error
+  if (error) throw error;
 
-  const { data } = db.storage.from(BUCKET).getPublicUrl(storagePath)
-  return data.publicUrl
+  const { data } = db.storage.from(BUCKET).getPublicUrl(storagePath);
+  return data.publicUrl;
 }
 ```
 
@@ -476,43 +467,43 @@ export async function uploadVideo(
 Create `generator/src/index.ts`:
 
 ```typescript
-import 'dotenv/config'
-import { fetchTodayMatches, saveVideoUrl } from './supabase.js'
-import { renderMatch } from './render.js'
-import { uploadVideo } from './upload.js'
-import type { Match } from './compose.js'
+import "dotenv/config";
+import { fetchTodayMatches, saveVideoUrl } from "./supabase.js";
+import { renderMatch } from "./render.js";
+import { uploadVideo } from "./upload.js";
+import type { Match } from "./compose.js";
 
 async function run() {
-  console.log('[generator] Fetching today\'s matches...')
-  const rows = await fetchTodayMatches()
+  console.log("[generator] Fetching today's matches...");
+  const rows = await fetchTodayMatches();
 
   if (rows.length === 0) {
-    console.log('[generator] No matches today. Done.')
-    return
+    console.log("[generator] No matches today. Done.");
+    return;
   }
 
-  console.log(`[generator] Found ${rows.length} match(es). Rendering...`)
+  console.log(`[generator] Found ${rows.length} match(es). Rendering...`);
 
   for (const row of rows) {
-    const match = row as Match
+    const match = row as Match;
     try {
-      console.log(`  → ${match.home_team} vs ${match.away_team}`)
-      const videoPath = await renderMatch(match)
-      const videoUrl  = await uploadVideo(match.id, videoPath)
-      await saveVideoUrl(match.id, videoUrl)
-      console.log(`     ✓ ${videoUrl}`)
+      console.log(`  → ${match.home_team} vs ${match.away_team}`);
+      const videoPath = await renderMatch(match);
+      const videoUrl = await uploadVideo(match.id, videoPath);
+      await saveVideoUrl(match.id, videoUrl);
+      console.log(`     ✓ ${videoUrl}`);
     } catch (err) {
-      console.error(`     ✗ Failed for match ${match.id}:`, err)
+      console.error(`     ✗ Failed for match ${match.id}:`, err);
     }
   }
 
-  console.log('[generator] All done.')
+  console.log("[generator] All done.");
 }
 
-run().catch(err => {
-  console.error('[generator] Fatal error:', err)
-  process.exit(1)
-})
+run().catch((err) => {
+  console.error("[generator] Fatal error:", err);
+  process.exit(1);
+});
 ```
 
 - [ ] `index.ts` created
@@ -639,30 +630,56 @@ alongside the cron job.
 
 ## Key Decisions & Open Items
 
-| Item | Decision | Status |
-|------|----------|--------|
-| Catalog blocks to use | _Choose from https://hyperframes.heygen.com/catalog/blocks/_ | [ ] |
-| Video duration | 10s default (configurable) | [ ] |
-| Reel content: one match per video or multi-match? | _TBD_ | [ ] |
-| Cron schedule (UTC time) | `0 6 * * *` (adjust) | [ ] |
-| Render.com instance size | Standard (2GB) | [ ] |
-| Supabase Storage bucket visibility | Public (for direct URL use) | [ ] |
-| Custom fonts: Google or local files? | _See style guide_ | [ ] |
+| Item                                              | Decision                                                    | Status |
+| ------------------------------------------------- | ----------------------------------------------------------- | ------ |
+| Catalog blocks to use                             | Custom template (`match-reel.html`) built with brand tokens | [x]    |
+| Video duration                                    | 12s per reel                                                | [x]    |
+| Reel content: one match per video or multi-match? | One match per video                                         | [x]    |
+| Cron schedule (UTC time)                          | `0 6 * * *` (adjust)                                        | [ ]    |
+| Render.com instance size                          | Standard (2GB)                                              | [ ]    |
+| Supabase Storage bucket visibility                | Public (for direct URL use)                                 | [ ]    |
+| Custom fonts: Google or local files?              | Google Fonts (Sora) via @import                             | [x]    |
 
 ---
 
 ## Progress Tracker
 
-| Phase | Description | Status |
-|-------|-------------|--------|
-| 1 | Local Foundation | [ ] |
-| 2 | Brand System | [ ] |
-| 3 | Match Composition Template | [ ] |
-| 4 | Supabase Integration | [ ] |
-| 5 | Local Render Pipeline | [ ] |
-| 6 | Render.com Deployment | [ ] |
-| 7 | Dashboard Integration | [ ] |
+| Phase | Description                | Status                                               |
+| ----- | -------------------------- | ---------------------------------------------------- |
+| 1     | Local Foundation           | [x] Done                                             |
+| 2     | Brand System               | [x] Done                                             |
+| 3     | Match Composition Template | [x] Done — `generator/src/templates/match-reel.html` |
+| 4     | Supabase Integration       | [ ] Next                                             |
+| 5     | Local Render Pipeline      | [ ]                                                  |
+| 6     | Render.com Deployment      | [ ]                                                  |
+| 7     | Dashboard Integration      | [ ]                                                  |
+
+### What was built in Phase 2 & 3
+
+```
+generator/
+  .env.example                      ← env var template
+  .gitignore
+  package.json                      ← @ondeassistir/generator workspace pkg
+  tsconfig.json
+  src/
+    brand.css                       ← all OndeAssistir CSS tokens + animations
+    compose.ts                      ← fills match-reel.html with real data
+    templates/
+      match-reel.html               ← 1080×1920 Instagram Reel composition
+```
+
+**Template features:**
+
+- 12s / 30fps / 1080×1920 (Instagram Reels format)
+- Sora font (Google Fonts)
+- Dark navy background with purple top glow
+- Animated purple-to-blue conic border around match card
+- Home / Away team logos in circular rings with entrance animations
+- Kickoff date + time (formatted in `America/Sao_Paulo`)
+- Broadcast channel badges
+- OndeAssistir footer branding
 
 ---
 
-*Last updated: 2026-04-17*
+_Last updated: 2026-04-17_
