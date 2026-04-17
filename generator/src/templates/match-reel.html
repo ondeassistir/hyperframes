@@ -6,14 +6,12 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&display=swap');
 
-    /* ── CSS custom property for animated border ── */
     @property --border-angle {
       syntax: '<angle>';
       inherits: false;
       initial-value: 0deg;
     }
 
-    /* ── Keyframes ── */
     @keyframes border-spin {
       to { --border-angle: 360deg; }
     }
@@ -34,10 +32,8 @@
       to   { opacity: 1; transform: scale(1); }
     }
 
-    /* ── Reset ── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* ── Canvas ── */
     html, body {
       width: 1080px;
       height: 1920px;
@@ -54,24 +50,17 @@
       align-items: center;
     }
 
-    /* ── Background: subtle purple glow at top, fade to deep at bottom ── */
+    /* Subtle purple glow at top, deeper dark at bottom */
     .bg {
       position: absolute;
       inset: 0;
       background:
-        radial-gradient(ellipse 900px 500px at 50% -60px,
-          hsl(270 100% 50% / 0.14) 0%,
-          transparent 70%
-        ),
-        linear-gradient(
-          180deg,
-          hsl(215 28% 7%) 0%,
-          hsl(215 28% 5%) 100%
-        );
+        radial-gradient(ellipse 900px 480px at 50% -40px,
+          hsl(270 100% 50% / 0.13) 0%, transparent 70%),
+        linear-gradient(180deg, hsl(215 28% 7%) 0%, hsl(215 28% 5%) 100%);
       z-index: 0;
     }
 
-    /* ── Layout ── */
     .layout {
       position: relative;
       z-index: 1;
@@ -80,22 +69,34 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 88px 64px 88px;
+      padding: 88px 64px 80px;
     }
 
-    /* ── Header ── */
+    /* ── Header: OA logo | league logo | round ── */
     .header {
       width: 100%;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 72px;
+      margin-bottom: 68px;
       animation: fade-in 0.4s ease-out both;
     }
 
     .oa-logo {
-      height: 52px;
+      height: 48px;
       width: auto;
+    }
+
+    .header-center {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .league-logo {
+      height: 52px;
+      width: 52px;
+      object-fit: contain;
     }
 
     .round-pill {
@@ -109,7 +110,7 @@
       letter-spacing: 0.5px;
     }
 
-    /* ── Match card (animated pregame border) ── */
+    /* ── Match card with animated conic border ── */
     .match-card {
       width: 952px;
       display: flex;
@@ -118,17 +119,15 @@
       padding: 72px 56px 80px;
       gap: 52px;
       border-radius: 12px;
-
-      /* Animated pregame border */
       border: 1.5px solid transparent;
       background:
         linear-gradient(hsl(215 25% 10%), hsl(215 25% 10%)) padding-box,
         conic-gradient(
           from var(--border-angle),
-          hsl(270 100% 50% / 20%),
-          hsl(270 100% 65%),
+          hsl(270 100% 50% / 18%),
+          hsl(270 100% 68%),
           hsl(239 84% 67%),
-          hsl(270 100% 50% / 20%)
+          hsl(270 100% 50% / 18%)
         ) border-box;
       animation:
         border-spin 7s linear infinite,
@@ -193,7 +192,6 @@
     /* ── VS ── */
     .vs-block {
       display: flex;
-      flex-direction: column;
       align-items: center;
       flex-shrink: 0;
       animation: pop-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0.65s both;
@@ -227,15 +225,16 @@
       font-weight: 700;
       color: hsl(210 40% 98%);
       letter-spacing: -1px;
+      line-height: 1;
     }
 
     .kickoff-tz {
       font-size: 24px;
       font-weight: 400;
-      color: hsl(215 20% 55%);
+      color: hsl(215 20% 50%);
     }
 
-    /* ── Channels ── */
+    /* ── Broadcast channels ── */
     .channels-section {
       margin-top: 60px;
       display: flex;
@@ -248,7 +247,7 @@
     .channels-label {
       font-size: 24px;
       font-weight: 500;
-      color: hsl(215 20% 55%);
+      color: hsl(215 20% 50%);
       text-transform: uppercase;
       letter-spacing: 3px;
     }
@@ -256,39 +255,55 @@
     .channels-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 20px;
+      gap: 24px;
       justify-content: center;
+      align-items: center;
     }
 
-    .channel-badge {
+    .channel-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: hsl(215 25% 14%);
+      border: 1px solid hsl(215 25% 22%);
+      border-radius: 16px;
+      padding: 16px 28px;
+    }
+
+    /* Logo-based channel (has image) */
+    .channel-logo {
+      height: 52px;
+      width: auto;
+      max-width: 200px;
+      object-fit: contain;
+    }
+
+    /* Text fallback when no logo */
+    .channel-name {
       font-size: 28px;
       font-weight: 600;
       color: hsl(210 40% 98%);
-      background: hsl(215 25% 16%);
-      border: 1px solid hsl(215 25% 24%);
-      padding: 14px 36px;
-      border-radius: 999px;
     }
 
-    /* ── Bottom branding ── */
+    /* ── Footer branding ── */
     .footer {
       margin-top: auto;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 20px;
+      gap: 18px;
       animation: fade-in 0.4s ease-out 1.2s both;
     }
 
     .divider {
-      width: 120px;
+      width: 100px;
       height: 1px;
       background: hsl(215 25% 20%);
       margin-bottom: 8px;
     }
 
     .footer-logo {
-      height: 56px;
+      height: 52px;
       width: auto;
       opacity: 0.85;
     }
@@ -296,7 +311,7 @@
     .footer-tagline {
       font-size: 26px;
       font-weight: 400;
-      color: hsl(215 20% 55%);
+      color: hsl(215 20% 50%);
     }
 
     .footer-url {
@@ -312,13 +327,20 @@
 
   <div class="layout">
 
-    <!-- Header: logo + round -->
+    <!-- Header: OA logo | league | round -->
     <header class="header">
       <img
         class="oa-logo"
         src="https://img.ondeassistir.tv/images-scr/favicon/favicon.svg"
         alt="Onde Assistir"
       />
+      <div class="header-center">
+        <img
+          class="league-logo"
+          src="{{LEAGUE_LOGO_URL}}"
+          alt="Liga"
+        />
+      </div>
       <span class="round-pill">{{ROUND}}</span>
     </header>
 
@@ -327,7 +349,6 @@
       <span class="upcoming-label">Próxima Partida</span>
 
       <div class="teams">
-        <!-- Home -->
         <div class="team home">
           <div class="logo-ring">
             <img src="{{HOME_LOGO_URL}}" alt="{{HOME_TEAM}}" />
@@ -335,12 +356,10 @@
           <span class="team-name">{{HOME_TEAM}}</span>
         </div>
 
-        <!-- VS -->
         <div class="vs-block">
           <span class="vs-text">VS</span>
         </div>
 
-        <!-- Away -->
         <div class="team away">
           <div class="logo-ring">
             <img src="{{AWAY_LOGO_URL}}" alt="{{AWAY_TEAM}}" />
@@ -350,7 +369,7 @@
       </div>
     </div>
 
-    <!-- Kickoff -->
+    <!-- Kickoff date & time -->
     <div class="kickoff">
       <span class="kickoff-date">{{KICKOFF_DATE}}</span>
       <span class="kickoff-time">{{KICKOFF_TIME}}</span>
@@ -365,7 +384,7 @@
       </div>
     </div>
 
-    <!-- Footer branding -->
+    <!-- Footer -->
     <footer class="footer">
       <div class="divider"></div>
       <img

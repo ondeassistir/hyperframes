@@ -278,37 +278,73 @@ export function composeMatchHtml(match: Match): string {
 
 ## Phase 4 — Supabase Integration
 
-Connect to real match data.
+> **Status: [x] Code complete — ready to wire up env vars and test**
 
-### 4.1 Environment variables
+### 4.0 DB migration — add reel columns to `matches`
 
-Create `generator/.env` (never commit this):
+Run this once in Supabase SQL Editor before the first render:
+
+```sql
+ALTER TABLE matches
+  ADD COLUMN IF NOT EXISTS reel_url          text,
+  ADD COLUMN IF NOT EXISTS reel_generated_at timestamptz;
+```
+
+- [ ] Migration run in Supabase SQL Editor
+
+### 4.1 Create Supabase Storage bucket
+
+In Supabase Dashboard → Storage → New bucket:
+
+- **Name:** `match-reels`
+- **Public:** yes (so direct MP4 URLs work for Instagram)
+
+- [ ] `match-reels` bucket created and set to **Public**
+
+### 4.2 Environment variables
+
+Create `generator/.env` (never commit — already in `.gitignore`):
 
 ```env
-SUPABASE_URL=https://YOUR_PROJECT.supabase.co
+SUPABASE_URL=https://YOUR_PROJECT_ID.supabase.co
 SUPABASE_SERVICE_KEY=YOUR_SERVICE_ROLE_KEY
-
-# For video storage
-SUPABASE_STORAGE_BUCKET=match-videos
-
-# Optional: days ahead to generate (default 1)
+SUPABASE_STORAGE_BUCKET=match-reels
 DAYS_AHEAD=1
 ```
 
-Create `generator/.env.example` (commit this):
+Get the service role key: Supabase Dashboard → Project Settings → API → `service_role` (secret).
 
-```env
-SUPABASE_URL=
-SUPABASE_SERVICE_KEY=
-SUPABASE_STORAGE_BUCKET=match-videos
-DAYS_AHEAD=1
-```
+- [ ] `generator/.env` created locally
+- [ ] Service role key added
 
-- [ ] `.env` created locally (not committed)
-- [ ] `.env.example` committed
-- [ ] Supabase service role key obtained from Supabase dashboard → Project Settings → API
+### 4.3 What the code queries
 
-### 4.2 Supabase client (supabase.ts)
+The `generator/src/supabase.ts` file (`fetchUpcomingMatches`) will:
+
+1. Filter `matches` where `status = 'NOT STARTED'`, `has_broadcasts = true`, and `kickoff` is within the next `DAYS_AHEAD` days
+2. Parse `broadcasts.br` (JSONB array of channel IDs, e.g. `["amazon"]`)
+3. Batch-query `channels_index` for names + logos
+4. Return enriched `MatchRow[]` ready for rendering
+
+Real column mapping confirmed from your schema:
+
+| Generator field           | Supabase column           | Notes                                      |
+| ------------------------- | ------------------------- | ------------------------------------------ |
+| `match_id`                | `match_id` (text)         | Primary key                                |
+| `home_team`               | `home_team`               |                                            |
+| `away_team`               | `away_team`               |                                            |
+| `home_id`                 | `home_id` (int)           | → `imagedelivery.net/…/teams/{id}.png`     |
+| `away_id`                 | `away_id` (int)           | → `imagedelivery.net/…/teams/{id}.png`     |
+| `league_id`               | `league_id` (int)         | → `imagedelivery.net/…/leagues/{id}.png`   |
+| `kickoff`                 | `kickoff` (timestamptz)   | Formatted to BRT in template               |
+| `pot`                     | `pot`                     | "Regular Season - 13" → "Rodada 13"        |
+| `league_round_translated` | `league_round_translated` | Used if non-null, else falls back to `pot` |
+| `broadcasts`              | `broadcasts` (jsonb)      | `{"br": ["amazon", "sportv"]}`             |
+| `channels` (resolved)     | via `channels_index`      | `{id, name, logo}` joined in code          |
+
+- [ ] Verify query returns data: run `npx tsx generator/src/supabase.ts` (add a temp `main()`)
+
+### 4.4 Supabase client (supabase.ts)
 
 Create `generator/src/supabase.ts`:
 
@@ -429,87 +465,57 @@ export async function renderMatch(match: Match): Promise<string> {
 }
 ```
 
-- [ ] `render.ts` created
-- [ ] Render a single match locally with hardcoded data → `.mp4` confirmed
+### 5.1 Build the producer first
 
-### 5.2 Upload function (upload.ts)
+HyperFrames producer must be compiled before the generator can import it:
 
-Create `generator/src/upload.ts`:
-
-```typescript
-import { readFileSync } from "fs";
-import { db } from "./supabase.js";
-
-const BUCKET = process.env.SUPABASE_STORAGE_BUCKET ?? "match-videos";
-
-export async function uploadVideo(matchId: string, filePath: string): Promise<string> {
-  const fileBuffer = readFileSync(filePath);
-  const storagePath = `reels/${matchId}.mp4`;
-
-  const { error } = await db.storage.from(BUCKET).upload(storagePath, fileBuffer, {
-    contentType: "video/mp4",
-    upsert: true,
-  });
-
-  if (error) throw error;
-
-  const { data } = db.storage.from(BUCKET).getPublicUrl(storagePath);
-  return data.publicUrl;
-}
+```bash
+bun run build:producer
 ```
 
-- [ ] Create the `match-videos` bucket in Supabase Storage (Dashboard → Storage → New bucket → Public)
-- [ ] `upload.ts` created
-- [ ] Upload test confirmed (upload a dummy file, check bucket)
+- [ ] Producer built (run from repo root)
 
-### 5.3 Main entry point (index.ts)
+### 5.2 End-to-end local test
 
-Create `generator/src/index.ts`:
+```bash
+# From repo root
+cp generator/.env.example generator/.env
+# Fill in SUPABASE_URL and SUPABASE_SERVICE_KEY in generator/.env
 
-```typescript
-import "dotenv/config";
-import { fetchTodayMatches, saveVideoUrl } from "./supabase.js";
-import { renderMatch } from "./render.js";
-import { uploadVideo } from "./upload.js";
-import type { Match } from "./compose.js";
-
-async function run() {
-  console.log("[generator] Fetching today's matches...");
-  const rows = await fetchTodayMatches();
-
-  if (rows.length === 0) {
-    console.log("[generator] No matches today. Done.");
-    return;
-  }
-
-  console.log(`[generator] Found ${rows.length} match(es). Rendering...`);
-
-  for (const row of rows) {
-    const match = row as Match;
-    try {
-      console.log(`  → ${match.home_team} vs ${match.away_team}`);
-      const videoPath = await renderMatch(match);
-      const videoUrl = await uploadVideo(match.id, videoPath);
-      await saveVideoUrl(match.id, videoUrl);
-      console.log(`     ✓ ${videoUrl}`);
-    } catch (err) {
-      console.error(`     ✗ Failed for match ${match.id}:`, err);
-    }
-  }
-
-  console.log("[generator] All done.");
-}
-
-run().catch((err) => {
-  console.error("[generator] Fatal error:", err);
-  process.exit(1);
-});
+npx tsx generator/src/index.ts
 ```
 
-- [ ] `index.ts` created
-- [ ] End-to-end local test: `cd generator && npx tsx src/index.ts`
-- [ ] Video appears in Supabase Storage
-- [ ] `reel_url` written back to `matches` table
+Expected output:
+
+```
+[generator] Starting match reel generation...
+[generator] Found 2 match(es) to render.
+
+→ Botafogo x Internacional  (2026-04-26 20:00:00+00)
+    Rendering... 100%
+    Uploading... done.
+    Saving to DB... done.
+    ✓ https://YOUR_PROJECT.supabase.co/storage/v1/object/public/match-reels/reels/...mp4
+
+[generator] Finished. 2 rendered, 0 failed.
+```
+
+- [ ] `generator/.env` created with real credentials
+- [ ] `bun run build:producer` succeeded
+- [ ] `npx tsx generator/src/index.ts` runs without errors
+- [ ] MP4 appears in Supabase Storage → `match-reels` bucket
+- [ ] `matches.reel_url` and `matches.reel_generated_at` populated for rendered matches
+
+### 5.3 Spot-check the video
+
+Open the `reel_url` from Supabase directly in a browser and confirm:
+
+- [ ] Video plays, 12 seconds, 1080×1920
+- [ ] Teams logos load (Cloudflare Images CDN)
+- [ ] League logo in header
+- [ ] Kickoff date/time in BRT
+- [ ] Channel logos visible
+- [ ] Animations look correct
 
 ---
 
