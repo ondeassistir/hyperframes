@@ -24,6 +24,16 @@ interface BroadcastsJson {
   [country: string]: string[] | undefined;
 }
 
+function parseEnabledLeagueIds(): number[] {
+  const raw = process.env.ENABLED_LEAGUE_IDS ?? "";
+  return raw
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean)
+    .map(Number)
+    .filter((n) => !Number.isNaN(n));
+}
+
 export async function fetchUpcomingMatches(): Promise<MatchRow[]> {
   const daysAhead = Number(process.env.DAYS_AHEAD ?? 1);
 
@@ -33,7 +43,9 @@ export async function fetchUpcomingMatches(): Promise<MatchRow[]> {
   to.setDate(to.getDate() + daysAhead);
   to.setHours(23, 59, 59, 999);
 
-  const { data: matches, error } = await db
+  const enabledLeagueIds = parseEnabledLeagueIds();
+
+  let query = db
     .from("matches")
     .select(
       "match_id, league, league_id, home_team, away_team, home_id, away_id, kickoff, broadcasts, pot, league_round_translated",
@@ -43,6 +55,12 @@ export async function fetchUpcomingMatches(): Promise<MatchRow[]> {
     .gte("kickoff", from.toISOString())
     .lte("kickoff", to.toISOString())
     .order("kickoff", { ascending: true });
+
+  if (enabledLeagueIds.length > 0) {
+    query = query.in("league_id", enabledLeagueIds);
+  }
+
+  const { data: matches, error } = await query;
 
   if (error) throw error;
   if (!matches || matches.length === 0) return [];
