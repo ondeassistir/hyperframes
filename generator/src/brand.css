@@ -1,0 +1,126 @@
+/*
+ * OndeAssistir — Brand CSS Tokens
+ * Source: OndeAssistir_Style_Guide.md
+ *
+ * Dark mode is the default (matches the app).
+ * HSL values stored without hsl() wrapper, consumed as hsl(var(--token)).
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&display=swap');
+
+:root {
+  /* ── Typography ── */
+  --font-sans: 'Sora', sans-serif;
+
+  /* ── Core palette (dark mode) ── */
+  --background:          215 28% 7%;
+  --foreground:          210 40% 98%;
+  --card:                215 25% 10%;
+  --card-foreground:     210 40% 98%;
+  --primary:             270 100% 50%;
+  --primary-foreground:  355 100% 97%;
+  --secondary:           215 25% 16%;
+  --secondary-foreground:210 40% 98%;
+  --muted:               215 25% 16%;
+  --muted-foreground:    215 20% 65%;
+  --border:              215 25% 16%;
+  --ring:                270 100% 50%;
+  --destructive:         0 84% 60%;
+
+  /* ── Sport-specific ── */
+  --live:                0 84% 60%;
+  --live-text:           #75fa74;
+  --upcoming:            270 100% 50%;
+  --upcoming-foreground: 210 40% 98%;
+  --past:                215 20% 65%;
+
+  /* ── Radii ── */
+  --radius:    0.75rem;   /* 12px */
+  --radius-md: 0.625rem;  /* 10px */
+  --radius-sm: 0.5rem;    /*  8px */
+
+  /* ── App theme color ── */
+  --theme-color: #0F0F23;
+}
+
+/* ── Status badge base ── */
+.live-badge {
+  background: #75fa74;
+  color: #000;
+  font-size: 10px;
+  font-weight: 500;
+  padding: 2px 6px;
+  border-radius: 24px;
+  animation: pulse-live 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.upcoming-badge {
+  background: #570df8;
+  color: #feffff;
+  font-size: 9px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+/* ── Animated borders ── */
+@property --border-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes border-spin {
+  to { --border-angle: 360deg; }
+}
+
+.animated-border-pregame {
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  animation: border-spin 7s linear infinite;
+  background:
+    linear-gradient(hsl(var(--card)), hsl(var(--card))) padding-box,
+    conic-gradient(
+      from var(--border-angle),
+      hsl(239 84% 67% / 48%),
+      hsl(239 84% 67%),
+      hsl(239 92% 75%),
+      hsl(239 84% 67% / 48%)
+    ) border-box;
+}
+
+.animated-border-live {
+  border: 2px solid transparent;
+  border-radius: var(--radius);
+  animation: border-spin 7s linear infinite;
+  background:
+    linear-gradient(hsl(var(--card)), hsl(var(--card))) padding-box,
+    conic-gradient(
+      from var(--border-angle),
+      hsl(142 76% 36% / 48%),
+      hsl(142 76% 36%),
+      hsl(142 86% 46%),
+      hsl(142 76% 36% / 48%)
+    ) border-box;
+}
+
+/* ── Animations ── */
+@keyframes pulse-live {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.7; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in-delay-1 {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-in-top {
+  from { transform: translateY(-100%); }
+  to   { transform: translateY(0); }
+}
