@@ -50,7 +50,7 @@ export async function fetchUpcomingMatches(): Promise<MatchRow[]> {
     .select(
       "match_id, league, league_id, home_team, away_team, home_id, away_id, kickoff, broadcasts, pot, league_round_translated",
     )
-    .eq("status", "NOT STARTED")
+    .eq("status", "Not Started")
     .eq("has_broadcasts", true)
     .gte("kickoff", from.toISOString())
     .lte("kickoff", to.toISOString())
