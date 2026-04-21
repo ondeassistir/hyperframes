@@ -487,17 +487,17 @@
         S + 0.1,
       );
 
-      // Teams — fast, expo.out = confident
+      // Teams — same rise as kickoff for consistency
       tl.fromTo(
         "#home-row",
-        { x: -50, opacity: 0 },
-        { x: 0, opacity: 1, duration: 0.4, ease: "expo.out" },
+        { y: 30, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" },
         S + 0.45,
       );
       tl.fromTo(
         "#away-row",
-        { x: -50, opacity: 0 },
-        { x: 0, opacity: 1, duration: 0.4, ease: "expo.out" },
+        { y: 30, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" },
         S + 0.57,
       );
 
