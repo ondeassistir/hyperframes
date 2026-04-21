@@ -1,0 +1,81 @@
+# HyperFrames Generator — Production Cron Job Image
+#
+# Runs generator/src/index.ts: fetch upcoming matches → render MP4 → upload to Supabase Storage.
+# Requires Chromium (BeginFrame rendering) and FFmpeg (encoding/muxing).
+#
+# Build:  docker build -f Dockerfile.generator -t generator:local .
+# Run:    docker run --rm --env-file generator/.env generator:local
+
+FROM node:22-bookworm-slim
+
+# ── System dependencies ───────────────────────────────────────────────────────
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    curl \
+    unzip \
+    ffmpeg \
+    chromium \
+    libgbm1 \
+    libnss3 \
+    libatk-bridge2.0-0 \
+    libdrm2 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxrandr2 \
+    libcups2 \
+    libasound2 \
+    libpangocairo-1.0-0 \
+    libxshmfence1 \
+    libgtk-3-0 \
+    fonts-liberation \
+    fonts-noto-color-emoji \
+    fonts-noto-cjk \
+    fonts-noto-core \
+    fonts-noto-extra \
+    fonts-noto-ui-core \
+    fonts-freefont-ttf \
+    fonts-dejavu-core \
+    fontconfig \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean \
+    && fc-cache -fv
+
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
+ENV CONTAINER=true
+
+# Install chrome-headless-shell (required for HeadlessExperimental.beginFrame)
+RUN npx --yes @puppeteer/browsers install chrome-headless-shell@stable \
+      --path /root/.cache/puppeteer \
+    && find /root/.cache/puppeteer/chrome-headless-shell -name "chrome-headless-shell" -type f
+
+# ── Bun ───────────────────────────────────────────────────────────────────────
+RUN curl -fsSL https://bun.sh/install | bash
+ENV PATH="/root/.bun/bin:$PATH"
+
+WORKDIR /app
+
+# ── Install dependencies ──────────────────────────────────────────────────────
+# Copy manifests first so Docker can cache the install layer
+COPY package.json bun.lock ./
+COPY packages/core/package.json           packages/core/package.json
+COPY packages/engine/package.json         packages/engine/package.json
+COPY packages/player/package.json         packages/player/package.json
+COPY packages/producer/package.json       packages/producer/package.json
+COPY packages/cli/package.json            packages/cli/package.json
+COPY packages/studio/package.json         packages/studio/package.json
+COPY packages/shader-transitions/package.json packages/shader-transitions/package.json
+COPY generator/package.json               generator/package.json
+RUN bun install --frozen-lockfile
+
+# ── Copy source ───────────────────────────────────────────────────────────────
+COPY packages/core/     packages/core/
+COPY packages/engine/   packages/engine/
+COPY packages/producer/ packages/producer/
+COPY generator/         generator/
+
+# ── Build runtime artifacts ───────────────────────────────────────────────────
+# producer build script covers: core runtime, font data, and TypeScript → dist/
+RUN bun run --filter @hyperframes/producer build
+
+CMD ["bunx", "tsx", "generator/src/index.ts"]

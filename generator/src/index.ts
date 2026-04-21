@@ -13,12 +13,19 @@ async function run() {
     return;
   }
 
-  console.log(`[generator] Found ${matches.length} match(es) to render.\n`);
+  const limit = Number(process.env.MAX_RENDERS_PER_RUN ?? 0);
+  const batch = limit > 0 ? matches.slice(0, limit) : matches;
+
+  if (limit > 0 && matches.length > limit) {
+    console.log(`[generator] Found ${matches.length} match(es); capped to ${limit} this run (MAX_RENDERS_PER_RUN=${limit}).\n`);
+  } else {
+    console.log(`[generator] Found ${batch.length} match(es) to render.\n`);
+  }
 
   let rendered = 0;
   let failed = 0;
 
-  for (const match of matches) {
+  for (const match of batch) {
     const label = `${match.home_team} x ${match.away_team}`;
     console.log(`→ ${label}  (${match.kickoff})`);
 
