@@ -27,20 +27,22 @@ export function composeMatchHtml(match: MatchRow): string {
     timeZone: "America/Sao_Paulo",
   });
 
-  const kickoffTime = kickoff.toLocaleTimeString("pt-BR", {
-    hour: "2-digit",
-    minute: "2-digit",
-    timeZone: "America/Sao_Paulo",
-  });
+  const kickoffTime =
+    kickoff.toLocaleTimeString("pt-BR", {
+      hour: "2-digit",
+      minute: "2-digit",
+      timeZone: "America/Sao_Paulo",
+    }) + "h";
 
   const round = formatRound(match);
 
   const channelsHtml = match.channels
     .map((ch) => {
-      if (ch.logo) {
-        return `<div class="channel-item"><img src="${ch.logo}" alt="${escapeHtml(ch.name)}" class="channel-logo" /></div>`;
-      }
-      return `<div class="channel-item"><span class="channel-name">${escapeHtml(ch.name)}</span></div>`;
+      const badge = ch.free ? `<span class="free-badge">Grátis</span>` : "";
+      const logo = ch.logo
+        ? `<img src="${ch.logo}" alt="${escapeHtml(ch.name)}" class="channel-logo" />`
+        : "";
+      return `<div class="channel-item">${logo}<span class="channel-name">${escapeHtml(ch.name)}</span>${badge}</div>`;
     })
     .join("\n        ");
 
@@ -50,6 +52,7 @@ export function composeMatchHtml(match: MatchRow): string {
     .replaceAll("{{HOME_LOGO_URL}}", teamLogoUrl(match.home_id))
     .replaceAll("{{AWAY_LOGO_URL}}", teamLogoUrl(match.away_id))
     .replaceAll("{{LEAGUE_LOGO_URL}}", leagueLogoUrl(match.league_id))
+    .replaceAll("{{LEAGUE_NAME}}", escapeHtml(match.league))
     .replaceAll("{{ROUND}}", escapeHtml(round))
     .replaceAll("{{KICKOFF_DATE}}", capitalize(kickoffDate))
     .replaceAll("{{KICKOFF_TIME}}", kickoffTime)

@@ -16,7 +16,7 @@ export interface MatchRow {
   kickoff: string; // ISO 8601 with timezone
   pot: string | null; // e.g. "Regular Season - 13"
   league_round_translated: string | null;
-  channels: Array<{ id: string; name: string; logo: string | null }>;
+  channels: Array<{ id: string; name: string; logo: string | null; free?: boolean | null }>;
 }
 
 interface BroadcastsJson {
@@ -80,7 +80,7 @@ export async function fetchUpcomingMatches(): Promise<MatchRow[]> {
   if (channelIds.length > 0) {
     const { data: channels, error: chErr } = await db
       .from("channels_index")
-      .select("id, name, logo")
+      .select("id, name, logo, free")
       .in("id", channelIds);
 
     if (chErr) throw chErr;
@@ -92,7 +92,10 @@ export async function fetchUpcomingMatches(): Promise<MatchRow[]> {
     const brIds = b?.br ?? [];
     const channels = brIds
       .map((id) => channelMap.get(id))
-      .filter((c): c is { id: string; name: string; logo: string | null } => c != null);
+      .filter(
+        (c): c is { id: string; name: string; logo: string | null; free?: boolean | null } =>
+          c != null,
+      );
 
     return {
       match_id: m.match_id,
