@@ -65,7 +65,7 @@ export function composeMatchHtml(match: MatchRow): string {
 }
 
 function formatRound(match: MatchRow): string {
-  if (match.league_round_translated) return match.league_round_translated;
+  if (match.league_week_number_pt_br) return match.league_week_number_pt_br;
   if (match.pot) {
     // "Regular Season - 13" → "Rodada 13"
     const m = match.pot.match(/Regular Season\s*-\s*(\d+)/i);

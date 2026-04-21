@@ -15,7 +15,7 @@ export interface MatchRow {
   league: string;
   kickoff: string; // ISO 8601 with timezone
   pot: string | null; // e.g. "Regular Season - 13"
-  league_round_translated: string | null;
+  league_week_number_pt_br: string | null;
   channels: Array<{ id: string; name: string; logo: string | null; free?: boolean | null }>;
 }
 
@@ -48,7 +48,7 @@ export async function fetchUpcomingMatches(): Promise<MatchRow[]> {
   let query = db
     .from("matches")
     .select(
-      "match_id, league, league_id, home_team, away_team, home_id, away_id, kickoff, broadcasts, pot, league_round_translated",
+      "match_id, league, league_id, home_team, away_team, home_id, away_id, kickoff, broadcasts, pot, league_week_number_pt_br",
     )
     .eq("status", "Not Started")
     .eq("has_broadcasts", true)
@@ -107,7 +107,7 @@ export async function fetchUpcomingMatches(): Promise<MatchRow[]> {
       league: m.league,
       kickoff: m.kickoff,
       pot: m.pot,
-      league_round_translated: m.league_round_translated,
+      league_week_number_pt_br: m.league_week_number_pt_br,
       channels,
     };
   });
