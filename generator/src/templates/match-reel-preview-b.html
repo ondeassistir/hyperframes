@@ -259,11 +259,14 @@
       tl.to("#oa-logo-intro", { rotationY: 0, opacity: 1, duration: 0.7, ease: "power3.out" }, 0.15);
       tl.fromTo("#tagline-intro", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" }, 0.7);
 
-      // t=1.2 → t=1.8: stillness — breathe
+      // t=1.2 → t=1.4: stillness — breathe
+
+      // Intro fades out cleanly before the whip starts
+      tl.to("#oa-logo-intro, #tagline-intro", { opacity: 0, duration: 0.25, ease: "power2.in" }, 1.4);
 
       // ── Phase 2: Whip pan transition ──────────────────────────────────────
       //
-      // Scene 2 whips in from the right (above scene 1) — scene 1 fades gracefully in place
+      // Scene 2 whips in from the right over an already-clear scene 1
       //
       var T = 1.8;
 
@@ -278,8 +281,8 @@
         ease: "power3.out",
       }, T + 0.04);
 
-      // Scene1: fade out as scene2 overlays it (logo stays put)
-      tl.to("#scene1", { opacity: 0, duration: 0.16, ease: "power2.out" }, T + 0.06);
+      // Scene1: hide once scene2 is fully in position
+      tl.set("#scene1", { opacity: 0 }, T + 0.25);
 
       // ── Phase 3: Scene 2 build — starts as whip lands, no dead air ──
       var S = T + 0.22;
