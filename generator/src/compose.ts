@@ -17,6 +17,10 @@ export function leagueLogoUrl(leagueId: number): string {
   return `${CDN}/leagues/${leagueId}.png/public`;
 }
 
+export function leagueBgUrl(leagueId: number): string {
+  return `${CDN}/ui/reels/league_bg/${leagueId}.jpg/public`;
+}
+
 export function composeMatchHtml(match: MatchRow): string {
   const kickoff = new Date(match.kickoff);
 
@@ -52,6 +56,7 @@ export function composeMatchHtml(match: MatchRow): string {
     .replaceAll("{{HOME_LOGO_URL}}", teamLogoUrl(match.home_id))
     .replaceAll("{{AWAY_LOGO_URL}}", teamLogoUrl(match.away_id))
     .replaceAll("{{LEAGUE_LOGO_URL}}", leagueLogoUrl(match.league_id))
+    .replaceAll("{{LEAGUE_BG_URL}}", leagueBgUrl(match.league_id))
     .replaceAll("{{LEAGUE_NAME}}", escapeHtml(match.league))
     .replaceAll("{{ROUND}}", escapeHtml(round))
     .replaceAll("{{KICKOFF_DATE}}", capitalize(kickoffDate))

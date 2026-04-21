@@ -66,6 +66,16 @@
       #scene1 { z-index: 2; }
       #scene2 { z-index: 1; opacity: 0; }
 
+      #league-bg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: 0;
+        opacity: 0;
+      }
+
       .scene-bg {
         position: absolute;
         inset: 0;
@@ -73,7 +83,14 @@
         background:
           radial-gradient(ellipse 900px 500px at 50% -60px, hsl(270 100% 50% / 0.12) 0%, transparent 70%),
           linear-gradient(180deg, hsl(215 28% 7%) 0%, hsl(215 28% 5%) 100%);
-        z-index: 0;
+        z-index: 1;
+      }
+
+      /* scene2 overlay is semi-transparent so the league bg shows through */
+      #scene2 .scene-bg {
+        background:
+          radial-gradient(ellipse 900px 500px at 50% -60px, hsl(270 100% 50% / 0.18) 0%, transparent 70%),
+          linear-gradient(180deg, hsl(215 28% 7% / 0.78) 0%, hsl(215 28% 5% / 0.88) 100%);
       }
 
       .intro-center {
@@ -162,6 +179,7 @@
 
         <!-- Scene 2: Match info -->
         <div id="scene2" class="scene">
+          <img id="league-bg" src="https://imagedelivery.net/d9gC2EGekkZoINfC-sskXg/ui/reels/league_bg/73.jpg/public" alt="" />
           <div class="scene-bg"></div>
 
           <div class="layout">
@@ -281,6 +299,9 @@
 
       // Scene1: hide once scene2 is settled
       tl.set("#scene1", { opacity: 0 }, T + 0.5);
+
+      // League background fades in as scene2 settles
+      tl.to("#league-bg", { opacity: 1, duration: 0.9, ease: "power2.out" }, T + 0.1);
 
       // ── Phase 3: Scene 2 build — overlaps tail of whip for seamless feel ──
       var S = T + 0.1;

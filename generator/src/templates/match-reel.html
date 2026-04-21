@@ -70,6 +70,17 @@
         opacity: 0;
       }
 
+      /* ── League background image ── */
+      #league-bg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: 0;
+        opacity: 0;
+      }
+
       /* ── Shared scene background ── */
       .scene-bg {
         position: absolute;
@@ -82,7 +93,18 @@
             transparent 70%
           ),
           linear-gradient(180deg, hsl(215 28% 7%) 0%, hsl(215 28% 5%) 100%);
-        z-index: 0;
+        z-index: 1;
+      }
+
+      /* scene2 overlay is semi-transparent so the league bg shows through */
+      #scene2 .scene-bg {
+        background:
+          radial-gradient(
+            ellipse 900px 500px at 50% -60px,
+            hsl(270 100% 50% / 0.18) 0%,
+            transparent 70%
+          ),
+          linear-gradient(180deg, hsl(215 28% 7% / 0.78) 0%, hsl(215 28% 5% / 0.88) 100%);
       }
 
       /* ── Scene 1: intro ── */
@@ -346,6 +368,7 @@
 
       <!-- Scene 2: Match info -->
       <div id="scene2" class="scene">
+        <img id="league-bg" src="{{LEAGUE_BG_URL}}" alt="" />
         <div class="scene-bg"></div>
 
         <div class="layout">
@@ -448,6 +471,9 @@
       tl.set("#scene2", { opacity: 1 }, T + 0.2);
       tl.to("#wipe-a", { x: 1080, duration: 0.25, ease: "power3.inOut" }, T + 0.28);
       tl.to("#wipe-b", { x: 1080, duration: 0.25, ease: "power3.inOut" }, T + 0.34);
+
+      // League background fades in as wipes exit
+      tl.to("#league-bg", { opacity: 1, duration: 0.9, ease: "power2.out" }, T + 0.3);
 
       // ── Phase 3: Scene 2 build ────────────────────────────────────────────
 
