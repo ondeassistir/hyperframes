@@ -75,7 +75,7 @@ COPY packages/producer/ packages/producer/
 COPY generator/         generator/
 
 # ── Build runtime artifacts ───────────────────────────────────────────────────
-RUN bun run --filter @hyperframes/core build:hyperframes-runtime:modular
-RUN cd packages/producer && bunx tsx scripts/generate-font-data.ts
+# producer build script covers: core runtime, font data, and TypeScript → dist/
+RUN bun run --filter @hyperframes/producer build
 
 CMD ["bunx", "tsx", "generator/src/index.ts"]
