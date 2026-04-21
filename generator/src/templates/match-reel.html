@@ -128,7 +128,8 @@
         display: flex;
         align-items: center;
         gap: 20px;
-        margin-bottom: 16px;
+        margin-bottom: 72px;
+        width: 100%;
       }
 
       #league-logo {
@@ -138,9 +139,16 @@
         flex-shrink: 0;
       }
 
+      #league-info {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        flex: 1;
+      }
+
       #league-name {
         font-size: 32px;
-        font-weight: 500;
+        font-weight: 700;
         color: hsl(210 40% 98%);
       }
 
@@ -148,8 +156,13 @@
         font-size: 24px;
         font-weight: 400;
         color: hsl(215 20% 65%);
-        margin-bottom: 72px;
-        display: block;
+      }
+
+      #app-icon {
+        width: 100px;
+        height: 100px;
+        object-fit: contain;
+        flex-shrink: 0;
       }
 
       /* Team rows */
@@ -172,7 +185,7 @@
 
       #home-name,
       #away-name {
-        font-size: 52px;
+        font-size: 64px;
         font-weight: 700;
         color: hsl(210 40% 98%);
         line-height: 1.1;
@@ -184,7 +197,7 @@
         width: 100%;
         height: 1px;
         background: hsl(215 25% 18%);
-        margin-bottom: 36px;
+        margin-bottom: 56px;
         flex-shrink: 0;
       }
 
@@ -194,7 +207,7 @@
 
       /* Kickoff */
       #kickoff-time {
-        font-size: 108px;
+        font-size: 64px;
         font-weight: 700;
         color: hsl(210 40% 98%);
         letter-spacing: -3px;
@@ -213,12 +226,11 @@
 
       /* Channels */
       #channels-label {
-        font-size: 22px;
+        font-size: 32px;
         font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 4px;
-        color: hsl(270 100% 70%);
-        margin-bottom: 28px;
+        letter-spacing: 0px;
+        color: hsl(142 70% 50%);
+        margin-bottom: 48px;
         display: block;
       }
 
@@ -238,15 +250,16 @@
       }
 
       .channel-logo {
-        width: 52px;
-        height: 52px;
+        width: 96px;
+        height: 104px;
         object-fit: contain;
         flex-shrink: 0;
+        border-radius: 20px;
       }
 
       .channel-name {
-        font-size: 28px;
-        font-weight: 500;
+        font-size: 32px;
+        font-weight: 700;
         color: hsl(210 40% 98%);
       }
 
@@ -266,48 +279,19 @@
       #app-cta {
         display: flex;
         flex-direction: column;
-        gap: 20px;
+        gap: 40px;
       }
 
       #cta-text {
-        font-size: 30px;
+        font-size: 32px;
         font-weight: 600;
         color: hsl(210 40% 98%);
         display: block;
       }
 
       #gplay-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 16px;
-        background: hsl(215 25% 14%);
-        border: 1px solid hsl(215 25% 22%);
-        border-radius: 12px;
-        padding: 16px 28px;
-      }
-
-      .play-icon {
-        font-size: 28px;
-        color: hsl(270 100% 68%);
-        line-height: 1;
-      }
-
-      .badge-text {
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
-      }
-
-      .badge-sub {
-        font-size: 18px;
-        font-weight: 400;
-        color: hsl(215 20% 65%);
-      }
-
-      .badge-main {
-        font-size: 26px;
-        font-weight: 600;
-        color: hsl(210 40% 98%);
+        height: 80px;
+        width: auto;
       }
 
       /* Footer */
@@ -323,13 +307,13 @@
       }
 
       .footer-logo-img {
-        height: 32px;
+        height: 56px;
         width: auto;
         opacity: 0.7;
       }
 
       .footer-domain {
-        font-size: 26px;
+        font-size: 32px;
         font-weight: 600;
         color: hsl(270 100% 68%);
       }
@@ -353,10 +337,10 @@
         <div class="intro-center">
           <img
             id="oa-logo-intro"
-            src="https://img.ondeassistir.tv/images-scr/favicon/favicon.svg"
+            src="https://imagedelivery.net/d9gC2EGekkZoINfC-sskXg/ui/logo-roxo.svg/public"
             alt="Onde Assistir"
           />
-          <p id="tagline-intro">Onde Assistir</p>
+          <p id="tagline-intro">Onde Assistir Futebol Ao Vivo</p>
         </div>
       </div>
 
@@ -368,9 +352,16 @@
           <!-- League -->
           <div id="league-row">
             <img id="league-logo" src="{{LEAGUE_LOGO_URL}}" alt="Liga" />
-            <span id="league-name">{{LEAGUE_NAME}}</span>
+            <div id="league-info">
+              <span id="league-name">{{LEAGUE_NAME}}</span>
+              <span id="round-label">{{ROUND}}</span>
+            </div>
+            <img
+              id="app-icon"
+              src="https://imagedelivery.net/d9gC2EGekkZoINfC-sskXg/ui/ic_launcher-playstore-reel.png/public"
+              alt=""
+            />
           </div>
-          <span id="round-label">{{ROUND}}</span>
 
           <!-- Teams -->
           <div id="home-row">
@@ -393,19 +384,17 @@
           <div id="divider-rule-2"></div>
 
           <!-- Channels -->
-          <span id="channels-label">Onde assistir</span>
+          <span id="channels-label">Onde Assistir Ao Vivo</span>
           <div id="channels-list">{{CHANNELS_HTML}}</div>
 
           <!-- App CTA -->
           <div id="app-cta">
             <span id="cta-text">Baixe o app! 100% Grátis</span>
-            <div id="gplay-badge">
-              <span class="play-icon">&#9654;</span>
-              <div class="badge-text">
-                <span class="badge-sub">Disponível no</span>
-                <span class="badge-main">Google Play</span>
-              </div>
-            </div>
+            <img
+              id="gplay-badge"
+              src="https://imagedelivery.net/d9gC2EGekkZoINfC-sskXg/ui/googleplay-badge.svg/public"
+              alt="Disponível no Google Play"
+            />
           </div>
         </div>
 
@@ -416,7 +405,7 @@
             src="https://img.ondeassistir.tv/images-scr/favicon/favicon.svg"
             alt="Onde Assistir"
           />
-          <span class="footer-domain">ondeassistir.tv</span>
+          <span class="footer-domain">www.ondeassistir.tv</span>
         </div>
       </div>
     </div>
@@ -470,14 +459,6 @@
         { x: -40, opacity: 0 },
         { x: 0, opacity: 1, duration: 0.45, ease: "power3.out" },
         S + 0.1,
-      );
-
-      // Round label — different ease for variety
-      tl.fromTo(
-        "#round-label",
-        { x: -30, opacity: 0 },
-        { x: 0, opacity: 1, duration: 0.35, ease: "power2.out" },
-        S + 0.25,
       );
 
       // Teams — fast, expo.out = confident
