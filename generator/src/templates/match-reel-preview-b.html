@@ -270,34 +270,34 @@
       // Raise scene2 above scene1, position it off-right, already blurred
       tl.set("#scene2", { opacity: 1, x: 220, filter: "blur(40px)", zIndex: 3 }, T);
 
-      // Scene2: whip into position, blur clears
+      // Scene2: fast whip into position, blur clears
       tl.to("#scene2", {
         x: 0,
         filter: "blur(0px)",
-        duration: 0.32,
+        duration: 0.2,
         ease: "power3.out",
-      }, T + 0.05);
+      }, T + 0.04);
 
-      // Scene1: fade out gently as scene2 overlays it (logo stays put)
-      tl.to("#scene1", { opacity: 0, duration: 0.22, ease: "power2.out" }, T + 0.1);
+      // Scene1: fade out as scene2 overlays it (logo stays put)
+      tl.to("#scene1", { opacity: 0, duration: 0.16, ease: "power2.out" }, T + 0.06);
 
-      // ── Phase 3: Scene 2 build ──
-      var S = T + 0.45; // start content animations after transition settles
+      // ── Phase 3: Scene 2 build — starts as whip lands, no dead air ──
+      var S = T + 0.22;
 
-      tl.fromTo("#league-row", { x: -40, opacity: 0 }, { x: 0, opacity: 1, duration: 0.45, ease: "power3.out" }, S + 0.1);
-      tl.fromTo("#home-row", { x: -50, opacity: 0 }, { x: 0, opacity: 1, duration: 0.4, ease: "expo.out" }, S + 0.35);
-      tl.fromTo("#away-row", { x: -50, opacity: 0 }, { x: 0, opacity: 1, duration: 0.4, ease: "expo.out" }, S + 0.47);
-      tl.to("#divider-rule", { scaleX: 1, duration: 0.5, ease: "power2.inOut" }, S + 0.6);
-      tl.fromTo("#kickoff-time", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" }, S + 0.8);
-      tl.fromTo("#kickoff-date", { x: -20, opacity: 0 }, { x: 0, opacity: 1, duration: 0.3, ease: "power2.out" }, S + 1.05);
-      tl.to("#divider-rule-2", { scaleX: 1, duration: 0.4, ease: "power2.inOut" }, S + 1.25);
-      tl.fromTo("#channels-label", { x: -25, opacity: 0 }, { x: 0, opacity: 1, duration: 0.3, ease: "power2.out" }, S + 1.4);
-      tl.fromTo(".channel-item", { x: -35, opacity: 0 }, { x: 0, opacity: 1, duration: 0.35, ease: "power2.out" }, S + 1.55);
-      tl.fromTo("#app-cta", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.45, ease: "power2.out" }, S + 2.4);
-      tl.fromTo("#oa-footer", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "sine.out" }, S + 2.7);
+      tl.fromTo("#league-row", { x: -40, opacity: 0 }, { x: 0, opacity: 1, duration: 0.45, ease: "power3.out" }, S);
+      tl.fromTo("#home-row", { x: -50, opacity: 0 }, { x: 0, opacity: 1, duration: 0.4, ease: "expo.out" }, S + 0.2);
+      tl.fromTo("#away-row", { x: -50, opacity: 0 }, { x: 0, opacity: 1, duration: 0.4, ease: "expo.out" }, S + 0.32);
+      tl.to("#divider-rule", { scaleX: 1, duration: 0.5, ease: "power2.inOut" }, S + 0.45);
+      tl.fromTo("#kickoff-time", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" }, S + 0.65);
+      tl.fromTo("#kickoff-date", { x: -20, opacity: 0 }, { x: 0, opacity: 1, duration: 0.3, ease: "power2.out" }, S + 0.9);
+      tl.to("#divider-rule-2", { scaleX: 1, duration: 0.4, ease: "power2.inOut" }, S + 1.1);
+      tl.fromTo("#channels-label", { x: -25, opacity: 0 }, { x: 0, opacity: 1, duration: 0.3, ease: "power2.out" }, S + 1.25);
+      tl.fromTo(".channel-item", { x: -35, opacity: 0 }, { x: 0, opacity: 1, duration: 0.35, ease: "power2.out" }, S + 1.4);
+      tl.fromTo("#app-cta", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.45, ease: "power2.out" }, S + 2.1);
+      tl.fromTo("#oa-footer", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "sine.out" }, S + 2.4);
 
       // ── Phase 4: Breathe ──
-      tl.to("#scene2 .scene-bg", { scale: 1.06, duration: 3.5, ease: "sine.inOut", yoyo: true, repeat: -1 }, S + 2.7);
+      tl.to("#scene2 .scene-bg", { scale: 1.06, duration: 3.5, ease: "sine.inOut", yoyo: true, repeat: -1 }, S + 2.4);
 
       window.__timelines["match-reel"] = tl;
     </script>
