@@ -268,6 +268,7 @@
       var tl = gsap.timeline();
 
       // ── Phase 1: 3D logo flip ──
+      tl.set("#wipe-a, #wipe-b", { x: -1080 }, 0);
       tl.set("#oa-logo-intro", { rotationY: -90, opacity: 0, transformPerspective: 600 }, 0);
       tl.to("#oa-logo-intro", { rotationY: 0, opacity: 1, duration: 0.7, ease: "power3.out" }, 0.15);
       tl.fromTo("#tagline-intro", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" }, 0.7);

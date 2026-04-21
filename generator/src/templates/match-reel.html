@@ -426,7 +426,10 @@
       window.__timelines = window.__timelines || {};
       var tl = gsap.timeline({ paused: true });
 
-      // ── Phase 1: Scene 1 intro — 3D Y-axis flip reveal ──────────────────
+      // ── Phase 1: 3D logo flip ──────────────────────────────────────────
+
+      // Park wipe blocks offscreen from frame 0
+      tl.set("#wipe-a, #wipe-b", { x: -1080 }, 0);
 
       tl.set("#oa-logo-intro", { rotationY: -90, opacity: 0, transformPerspective: 600 }, 0);
       tl.to(
