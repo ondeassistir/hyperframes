@@ -1,0 +1,17 @@
+services:
+  - type: cron
+    name: match-reel-generator
+    runtime: docker
+    dockerfilePath: ./Dockerfile.generator
+    schedule: "0 6 * * *"  # daily at 06:00 UTC
+    envVars:
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_KEY
+        sync: false
+      - key: SUPABASE_STORAGE_BUCKET
+        value: match-videos
+      - key: DAYS_AHEAD
+        value: "1"
+      - key: ENABLED_LEAGUE_IDS
+        sync: false  # set league IDs in the Render dashboard (e.g. 71,72,13)
