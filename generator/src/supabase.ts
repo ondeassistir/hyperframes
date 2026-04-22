@@ -113,7 +113,6 @@ export async function fetchUpcomingMatches(): Promise<MatchRow[]> {
   });
 }
 
-// Requires reel_url and reel_generated_at columns — see migration in ONDEASSISTIR_PLAN.md
 export async function saveReelUrl(matchId: string, reelUrl: string): Promise<void> {
   const { error } = await db
     .from("matches")
@@ -122,6 +121,18 @@ export async function saveReelUrl(matchId: string, reelUrl: string): Promise<voi
       reel_generated_at: new Date().toISOString(),
     })
     .eq("match_id", matchId);
+
+  if (error) throw error;
+}
+
+export async function saveLeagueReelUrl(matchIds: string[], reelUrl: string): Promise<void> {
+  const { error } = await db
+    .from("matches")
+    .update({
+      reel_url: reelUrl,
+      reel_generated_at: new Date().toISOString(),
+    })
+    .in("match_id", matchIds);
 
   if (error) throw error;
 }

@@ -31,27 +31,6 @@
         background: hsl(215 28% 7%);
       }
 
-      /* ── Wipe blocks (above all scenes) ── */
-      #wipe-a,
-      #wipe-b {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 1080px;
-        height: 1920px;
-        z-index: 100;
-        pointer-events: none;
-      }
-
-      #wipe-a {
-        background: hsl(270 100% 50%);
-      }
-
-      #wipe-b {
-        background: hsl(262 80% 40%);
-      }
-
-      /* ── Scenes ── */
       .scene {
         position: absolute;
         top: 0;
@@ -61,16 +40,9 @@
         overflow: hidden;
       }
 
-      #scene1 {
-        z-index: 2;
-      }
+      #scene1 { z-index: 2; }
+      #scene2 { z-index: 1; opacity: 0; }
 
-      #scene2 {
-        z-index: 1;
-        opacity: 0;
-      }
-
-      /* ── League background image ── */
       #league-bg {
         position: absolute;
         inset: 0;
@@ -81,7 +53,6 @@
         opacity: 0;
       }
 
-      /* ── Shared scene background ── */
       .scene-bg {
         position: absolute;
         inset: 0;
@@ -96,7 +67,6 @@
         z-index: 1;
       }
 
-      /* scene2 overlay is semi-transparent so the league bg shows through */
       #scene2 .scene-bg {
         background:
           radial-gradient(
@@ -107,7 +77,6 @@
           linear-gradient(180deg, hsl(215 28% 7% / 0.78) 0%, hsl(215 28% 5% / 0.88) 100%);
       }
 
-      /* ── Scene 1: intro ── */
       .intro-center {
         position: relative;
         z-index: 1;
@@ -132,7 +101,6 @@
         letter-spacing: 2px;
       }
 
-      /* ── Scene 2: main layout ── */
       .layout {
         position: relative;
         z-index: 1;
@@ -145,7 +113,6 @@
         overflow: hidden;
       }
 
-      /* League row */
       #league-row {
         display: flex;
         align-items: center;
@@ -155,8 +122,8 @@
       }
 
       #league-logo {
-        width: 64px;
-        height: 64px;
+        width: 80px;
+        height: 80px;
         object-fit: contain;
         flex-shrink: 0;
       }
@@ -187,7 +154,6 @@
         flex-shrink: 0;
       }
 
-      /* Team rows */
       #home-row,
       #away-row {
         display: flex;
@@ -213,7 +179,6 @@
         line-height: 1.1;
       }
 
-      /* Divider rules */
       #divider-rule,
       #divider-rule-2 {
         width: 100%;
@@ -227,7 +192,6 @@
         margin-top: 16px;
       }
 
-      /* Kickoff */
       #kickoff-time {
         font-size: 64px;
         font-weight: 700;
@@ -246,11 +210,9 @@
         display: block;
       }
 
-      /* Channels */
       #channels-label {
         font-size: 32px;
         font-weight: 600;
-        letter-spacing: 0px;
         color: hsl(142 70% 50%);
         margin-bottom: 48px;
         display: block;
@@ -297,11 +259,11 @@
         flex-shrink: 0;
       }
 
-      /* App CTA */
       #app-cta {
         display: flex;
         flex-direction: column;
         gap: 40px;
+        align-items: flex-start;
       }
 
       #cta-text {
@@ -316,7 +278,6 @@
         width: auto;
       }
 
-      /* Footer */
       #oa-footer {
         position: absolute;
         bottom: 72px;
@@ -349,10 +310,6 @@
       data-width="1080"
       data-height="1920"
     >
-      <!-- Wipe blocks (cover transition overlay) -->
-      <div id="wipe-a"></div>
-      <div id="wipe-b"></div>
-
       <!-- Scene 1: Brand logo intro -->
       <div id="scene1" class="scene">
         <div class="scene-bg"></div>
@@ -372,7 +329,6 @@
         <div class="scene-bg"></div>
 
         <div class="layout">
-          <!-- League -->
           <div id="league-row">
             <img id="league-logo" src="{{LEAGUE_LOGO_URL}}" alt="Liga" />
             <div id="league-info">
@@ -386,7 +342,6 @@
             />
           </div>
 
-          <!-- Teams -->
           <div id="home-row">
             <img id="home-logo" src="{{HOME_LOGO_URL}}" alt="{{HOME_TEAM}}" />
             <span id="home-name">{{HOME_TEAM}}</span>
@@ -396,21 +351,16 @@
             <span id="away-name">{{AWAY_TEAM}}</span>
           </div>
 
-          <!-- Divider -->
           <div id="divider-rule"></div>
 
-          <!-- Kickoff -->
           <span id="kickoff-time">{{KICKOFF_TIME}}</span>
           <span id="kickoff-date">{{KICKOFF_DATE}}</span>
 
-          <!-- Divider -->
           <div id="divider-rule-2"></div>
 
-          <!-- Channels -->
           <span id="channels-label">Onde Assistir Ao Vivo</span>
           <div id="channels-list">{{CHANNELS_HTML}}</div>
 
-          <!-- App CTA -->
           <div id="app-cta">
             <span id="cta-text">Baixe o app! 100% Grátis</span>
             <img
@@ -421,7 +371,6 @@
           </div>
         </div>
 
-        <!-- Footer branding -->
         <div id="oa-footer">
           <img
             class="footer-logo-img"
@@ -438,140 +387,40 @@
       window.__timelines = window.__timelines || {};
       var tl = gsap.timeline({ paused: true });
 
-      // ── Phase 1: 3D logo flip ──────────────────────────────────────────
+      // ── Phase 1: 3D logo flip ──
 
-      // Park wipe blocks offscreen from frame 0
-      tl.set("#wipe-a, #wipe-b", { x: -1080 }, 0);
-
+      tl.set("#divider-rule, #divider-rule-2", { scaleX: 0, transformOrigin: "left center" }, 0);
       tl.set("#oa-logo-intro", { rotationY: -90, opacity: 0, transformPerspective: 600 }, 0);
-      tl.to(
-        "#oa-logo-intro",
-        { rotationY: 0, opacity: 1, duration: 0.7, ease: "power3.out" },
-        0.15,
-      );
+      tl.to("#oa-logo-intro", { rotationY: 0, opacity: 1, duration: 0.7, ease: "power3.out" }, 0.15);
+      tl.fromTo("#tagline-intro", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "power3.out" }, 0.7);
+      tl.to("#oa-logo-intro, #tagline-intro", { opacity: 0, duration: 0.25, ease: "power2.in" }, 1.25);
 
-      tl.fromTo(
-        "#tagline-intro",
-        { y: 20, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" },
-        0.7,
-      );
-
-      // t=1.2 → t=1.8: stillness — breathe
-
-      // ── Phase 2: Cover transition ─────────────────────────────────────────
+      // ── Phase 2: Whip pan ──
 
       var T = 1.8;
+      tl.set("#scene2", { opacity: 1, x: 220, filter: "blur(40px)", zIndex: 3 }, T);
+      tl.to("#scene2", { x: 0, filter: "blur(0px)", duration: 0.2, ease: "power3.out" }, T + 0.04);
+      tl.set("#scene1", { opacity: 0 }, T + 0.5);
+      tl.to("#league-bg", { opacity: 1, duration: 0.9, ease: "power2.out" }, T + 0.1);
 
-      tl.set("#wipe-a", { x: -1080 }, T - 0.01);
-      tl.set("#wipe-b", { x: -1080 }, T - 0.01);
-      tl.to("#wipe-a", { x: 0, duration: 0.25, ease: "power3.inOut" }, T);
-      tl.to("#wipe-b", { x: 0, duration: 0.25, ease: "power3.inOut" }, T + 0.06);
-      tl.set("#scene1", { opacity: 0 }, T + 0.2);
-      tl.set("#scene2", { opacity: 1 }, T + 0.2);
-      tl.to("#wipe-a", { x: 1080, duration: 0.25, ease: "power3.inOut" }, T + 0.28);
-      tl.to("#wipe-b", { x: 1080, duration: 0.25, ease: "power3.inOut" }, T + 0.34);
+      // ── Phase 3: Scene 2 build ──
 
-      // League background fades in as wipes exit
-      tl.to("#league-bg", { opacity: 1, duration: 0.9, ease: "power2.out" }, T + 0.3);
+      var S = T + 0.1;
+      tl.fromTo("#league-row", { opacity: 0 }, { opacity: 1, duration: 0.6, ease: "power2.out" }, S);
+      tl.fromTo("#home-row", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" }, S + 0.2);
+      tl.fromTo("#away-row", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" }, S + 0.32);
+      tl.to("#divider-rule", { scaleX: 1, duration: 0.5, ease: "power2.inOut" }, S + 0.45);
+      tl.fromTo("#kickoff-time", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" }, S + 0.65);
+      tl.fromTo("#kickoff-date", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "power3.out" }, S + 0.9);
+      tl.to("#divider-rule-2", { scaleX: 1, duration: 0.4, ease: "power2.inOut" }, S + 1.1);
+      tl.fromTo("#channels-label", { x: -25, opacity: 0 }, { x: 0, opacity: 1, duration: 0.3, ease: "power2.out" }, S + 1.25);
+      tl.fromTo(".channel-item", { x: -35, opacity: 0 }, { x: 0, opacity: 1, duration: 0.35, ease: "power2.out" }, S + 1.4);
+      tl.fromTo("#app-cta", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.45, ease: "power2.out" }, S + 2.1);
+      tl.fromTo("#oa-footer", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "sine.out" }, S + 2.4);
 
-      // ── Phase 3: Scene 2 build ────────────────────────────────────────────
+      // ── Phase 4: Breathe ──
 
-      var S = 2.4;
-
-      // League row — fades in
-      tl.fromTo(
-        "#league-row",
-        { opacity: 0 },
-        { opacity: 1, duration: 0.6, ease: "power2.out" },
-        S + 0.1,
-      );
-
-      // Teams — same rise as kickoff for consistency
-      tl.fromTo(
-        "#home-row",
-        { y: 30, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" },
-        S + 0.45,
-      );
-      tl.fromTo(
-        "#away-row",
-        { y: 30, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" },
-        S + 0.57,
-      );
-
-      // Divider draws in from left
-      tl.set("#divider-rule", { scaleX: 0, transformOrigin: "left center" }, S);
-      tl.to(
-        "#divider-rule",
-        { scaleX: 1, duration: 0.5, ease: "power2.inOut" },
-        S + 0.7,
-      );
-
-      // Kickoff time — gravity/weight, slow entrance
-      tl.fromTo(
-        "#kickoff-time",
-        { y: 30, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" },
-        S + 0.9,
-      );
-
-      // Date — lighter, faster follow
-      tl.fromTo(
-        "#kickoff-date",
-        { x: -20, opacity: 0 },
-        { x: 0, opacity: 1, duration: 0.3, ease: "power2.out" },
-        S + 1.15,
-      );
-
-      // Second divider
-      tl.set("#divider-rule-2", { scaleX: 0, transformOrigin: "left center" }, S);
-      tl.to(
-        "#divider-rule-2",
-        { scaleX: 1, duration: 0.4, ease: "power2.inOut" },
-        S + 1.35,
-      );
-
-      // Channels label
-      tl.fromTo(
-        "#channels-label",
-        { x: -25, opacity: 0 },
-        { x: 0, opacity: 1, duration: 0.3, ease: "power2.out" },
-        S + 1.5,
-      );
-
-      // Channel items — staggered from left
-      tl.fromTo(
-        ".channel-item",
-        { x: -35, opacity: 0 },
-        { x: 0, opacity: 1, duration: 0.35, ease: "power2.out", stagger: 0.1 },
-        S + 1.65,
-      );
-
-      // App CTA
-      tl.fromTo(
-        "#app-cta",
-        { y: 20, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.45, ease: "power2.out" },
-        S + 2.5,
-      );
-
-      // Footer
-      tl.fromTo(
-        "#oa-footer",
-        { opacity: 0 },
-        { opacity: 1, duration: 0.5, ease: "sine.out" },
-        S + 2.8,
-      );
-
-      // ── Phase 4: Breathe — ambient glow pulse ─────────────────────────────
-
-      tl.to(
-        "#scene2 .scene-bg",
-        { scale: 1.06, duration: 3.5, ease: "sine.inOut", yoyo: true, repeat: -1 },
-        S + 2.8,
-      );
+      tl.to("#scene2 .scene-bg", { scale: 1.06, duration: 3.5, ease: "sine.inOut", yoyo: true, repeat: -1 }, S + 2.4);
 
       window.__timelines["match-reel"] = tl;
     </script>
