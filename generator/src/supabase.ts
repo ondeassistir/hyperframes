@@ -7,6 +7,7 @@ export const db = createClient(url, key);
 
 export interface MatchRow {
   match_id: string;
+  api_football_id: number;
   home_team: string;
   away_team: string;
   home_id: number;
@@ -48,7 +49,7 @@ export async function fetchUpcomingMatches(): Promise<MatchRow[]> {
   let query = db
     .from("matches")
     .select(
-      "match_id, league, league_id, home_team, away_team, home_id, away_id, kickoff, broadcasts, pot, league_week_number_pt_br",
+      "match_id, api_football_id, league, league_id, home_team, away_team, home_id, away_id, kickoff, broadcasts, pot, league_week_number_pt_br",
     )
     .eq("status", "Not Started")
     .eq("has_broadcasts", true)
@@ -99,6 +100,7 @@ export async function fetchUpcomingMatches(): Promise<MatchRow[]> {
 
     return {
       match_id: m.match_id,
+      api_football_id: m.api_football_id,
       home_team: m.home_team,
       away_team: m.away_team,
       home_id: m.home_id,
