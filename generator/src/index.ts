@@ -14,18 +14,22 @@ async function run() {
     return;
   }
 
-  // Group matches by league_id
-  const byLeague = new Map<number, MatchRow[]>();
+  // Group matches by league_id + local date (America/Sao_Paulo)
+  const byLeagueDay = new Map<string, MatchRow[]>();
   for (const match of matches) {
-    const group = byLeague.get(match.league_id) ?? [];
+    const localDate = new Date(match.kickoff).toLocaleDateString("sv", {
+      timeZone: "America/Sao_Paulo",
+    }); // "YYYY-MM-DD"
+    const key = `${match.league_id}::${localDate}`;
+    const group = byLeagueDay.get(key) ?? [];
     group.push(match);
-    byLeague.set(match.league_id, group);
+    byLeagueDay.set(key, group);
   }
 
   const limit = Number(process.env.MAX_RENDERS_PER_RUN ?? 0);
   let jobCount = 0;
 
-  const leagueGroups = [...byLeague.values()];
+  const leagueGroups = [...byLeagueDay.values()];
   const totalJobs = leagueGroups.length;
 
   if (limit > 0 && totalJobs > limit) {
