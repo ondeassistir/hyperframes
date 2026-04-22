@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { fetchUpcomingMatches, saveReelUrl, saveLeagueReelUrl } from "./supabase.js";
 import type { MatchRow } from "./supabase.js";
-import { renderMatch, renderLeagueReel } from "./render.js";
+import { renderMatch, renderLeagueReel, leagueReelStorageName } from "./render.js";
 import { uploadReel } from "./upload.js";
 
 async function run() {
@@ -53,7 +53,7 @@ async function run() {
         const videoPath = await renderMatch(match);
 
         process.stdout.write("    Uploading...");
-        const storagePath = `${leagueId}-${match.match_id}.mp4`;
+        const storagePath = leagueReelStorageName(leagueId, [match]);
         const reelUrl = await uploadReel(match.match_id, videoPath, storagePath);
         console.log(" done.");
 
@@ -75,9 +75,8 @@ async function run() {
         const videoPath = await renderLeagueReel(leagueMatches);
 
         process.stdout.write("    Uploading...");
-        const ids = leagueMatches.map((m) => m.match_id).join("-");
-        const storagePath = `${leagueId}-${ids}.mp4`;
-        const reelUrl = await uploadReel(ids, videoPath, storagePath);
+        const storagePath = leagueReelStorageName(leagueId, leagueMatches);
+        const reelUrl = await uploadReel(storagePath, videoPath, storagePath);
         console.log(" done.");
 
         process.stdout.write("    Saving to DB...");

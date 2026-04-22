@@ -26,15 +26,24 @@ async function renderHtml(html: string, outDir: string): Promise<string> {
   return outputPath;
 }
 
+function numericId(matchId: string): string {
+  return matchId.match(/(\d+)$/)?.[1] ?? matchId;
+}
+
 export async function renderMatch(match: MatchRow): Promise<string> {
   const html = composeMatchHtml(match);
-  const outDir = join(tmpdir(), `hf-reel-${match.match_id}`);
+  const outDir = join(tmpdir(), `hf-reel-${numericId(match.match_id)}`);
   return renderHtml(html, outDir);
 }
 
 export async function renderLeagueReel(matches: MatchRow[]): Promise<string> {
   const html = composeLeagueReelHtml(matches);
-  const ids = matches.map((m) => m.match_id).join("-");
+  const ids = matches.map((m) => numericId(m.match_id)).join("-");
   const outDir = join(tmpdir(), `hf-reel-league-${matches[0].league_id}-${ids}`);
   return renderHtml(html, outDir);
+}
+
+export function leagueReelStorageName(leagueId: number, matches: MatchRow[]): string {
+  const ids = matches.map((m) => numericId(m.match_id)).join("-");
+  return `${leagueId}-${ids}.mp4`;
 }
