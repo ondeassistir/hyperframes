@@ -14,6 +14,8 @@ export interface MatchRow {
   away_id: number;
   league_id: number;
   league: string;
+  league_name: string;
+  league_logo_url: string;
   kickoff: string; // ISO 8601 with timezone
   pot: string | null; // e.g. "Regular Season - 13"
   league_week_number_pt_br: string | null;
@@ -88,6 +90,16 @@ export async function fetchUpcomingMatches(): Promise<MatchRow[]> {
     channelMap = new Map((channels ?? []).map((c) => [c.id, c]));
   }
 
+  // Fetch real league names and logos
+  const uniqueLeagueIds = [...new Set(matches.map((m) => m.league_id))];
+  const { data: leagues, error: lgErr } = await db
+    .from("leagues")
+    .select("id, name, logo_url")
+    .in("id", uniqueLeagueIds);
+
+  if (lgErr) throw lgErr;
+  const leagueMap = new Map((leagues ?? []).map((l) => [l.id, l]));
+
   return matches.map((m) => {
     const b = m.broadcasts as BroadcastsJson | null;
     const brIds = b?.br ?? [];
@@ -98,6 +110,8 @@ export async function fetchUpcomingMatches(): Promise<MatchRow[]> {
           c != null,
       );
 
+    const leagueData = leagueMap.get(m.league_id);
+
     return {
       match_id: m.match_id,
       api_football_id: m.api_football_id,
@@ -107,6 +121,8 @@ export async function fetchUpcomingMatches(): Promise<MatchRow[]> {
       away_id: m.away_id,
       league_id: m.league_id,
       league: m.league,
+      league_name: leagueData?.name ?? m.league,
+      league_logo_url: leagueData?.logo_url ?? "",
       kickoff: m.kickoff,
       pot: m.pot,
       league_week_number_pt_br: m.league_week_number_pt_br,

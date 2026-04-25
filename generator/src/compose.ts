@@ -18,10 +18,6 @@ export function teamLogoUrl(teamId: number): string {
   return `${CDN}/teams/${teamId}.png/public`;
 }
 
-export function leagueLogoUrl(leagueId: number): string {
-  return `${CDN}/leagues/${leagueId}.png/public`;
-}
-
 export function leagueBgUrl(leagueId: number): string {
   return `${CDN}/ui/reels/league_bg/${leagueId}.jpg/public`;
 }
@@ -52,9 +48,9 @@ export function composeMatchHtml(match: MatchRow): string {
     .replaceAll("{{AWAY_TEAM}}", escapeHtml(match.away_team))
     .replaceAll("{{HOME_LOGO_URL}}", teamLogoUrl(match.home_id))
     .replaceAll("{{AWAY_LOGO_URL}}", teamLogoUrl(match.away_id))
-    .replaceAll("{{LEAGUE_LOGO_URL}}", leagueLogoUrl(match.league_id))
+    .replaceAll("{{LEAGUE_LOGO_URL}}", match.league_logo_url)
     .replaceAll("{{LEAGUE_BG_URL}}", leagueBgUrl(match.league_id))
-    .replaceAll("{{LEAGUE_NAME}}", escapeHtml(match.league))
+    .replaceAll("{{LEAGUE_NAME}}", escapeHtml(match.league_name))
     .replaceAll("{{ROUND}}", escapeHtml(round))
     .replaceAll("{{KICKOFF_DATE}}", capitalize(kickoffDate))
     .replaceAll("{{KICKOFF_TIME}}", kickoffTime)
@@ -83,7 +79,7 @@ export function composeLeagueReelHtml(matches: MatchRow[]): string {
   const gsapScript = buildLeagueReelGsapScript(matches);
 
   return leagueReelTemplateHtml
-    .replaceAll("{{LEAGUE_NAME}}", escapeHtml(matches[0].league))
+    .replaceAll("{{LEAGUE_NAME}}", escapeHtml(matches[0].league_name))
     .replaceAll("{{COMPOSITION_DURATION}}", String(Math.ceil(totalDuration)))
     .replaceAll("{{SCENES_HTML}}", scenesHtml)
     .replaceAll("{{GSAP_SCRIPT}}", gsapScript);
@@ -125,9 +121,9 @@ function buildMatchSceneHtml(match: MatchRow, index: number): string {
         <div class="scene-bg"></div>
         <div class="layout">
           <div class="league-row">
-            <img class="league-logo" src="${leagueLogoUrl(match.league_id)}" alt="Liga" />
+            <img class="league-logo" src="${match.league_logo_url}" alt="Liga" />
             <div class="league-info">
-              <span class="league-name-el">${escapeHtml(match.league)}</span>
+              <span class="league-name-el">${escapeHtml(match.league_name)}</span>
               <span class="round-label">${escapeHtml(round)}</span>
             </div>
             <img class="app-icon" src="${APP_ICON_URL}" alt="" />
