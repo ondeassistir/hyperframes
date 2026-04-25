@@ -10,6 +10,8 @@ export interface MatchRow {
   api_football_id: number;
   home_team: string;
   away_team: string;
+  home_team_name: string;
+  away_team_name: string;
   home_id: number;
   away_id: number;
   league_id: number;
@@ -100,6 +102,16 @@ export async function fetchUpcomingMatches(): Promise<MatchRow[]> {
   if (lgErr) throw lgErr;
   const leagueMap = new Map((leagues ?? []).map((l) => [l.id, l]));
 
+  // Fetch real team names
+  const uniqueTeamIds = [...new Set(matches.flatMap((m) => [m.home_id, m.away_id]))];
+  const { data: teams, error: tmErr } = await db
+    .from("teams_map_full")
+    .select("api_football_team_id, team_full_name")
+    .in("api_football_team_id", uniqueTeamIds);
+
+  if (tmErr) throw tmErr;
+  const teamMap = new Map((teams ?? []).map((t) => [t.api_football_team_id, t.team_full_name]));
+
   return matches.map((m) => {
     const b = m.broadcasts as BroadcastsJson | null;
     const brIds = b?.br ?? [];
@@ -117,6 +129,8 @@ export async function fetchUpcomingMatches(): Promise<MatchRow[]> {
       api_football_id: m.api_football_id,
       home_team: m.home_team,
       away_team: m.away_team,
+      home_team_name: teamMap.get(m.home_id) ?? m.home_team,
+      away_team_name: teamMap.get(m.away_id) ?? m.away_team,
       home_id: m.home_id,
       away_id: m.away_id,
       league_id: m.league_id,

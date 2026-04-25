@@ -44,8 +44,8 @@ export function composeMatchHtml(match: MatchRow): string {
   const channelsHtml = buildChannelsHtml(match.channels);
 
   return templateHtml
-    .replaceAll("{{HOME_TEAM}}", escapeHtml(match.home_team))
-    .replaceAll("{{AWAY_TEAM}}", escapeHtml(match.away_team))
+    .replaceAll("{{HOME_TEAM}}", escapeHtml(match.home_team_name))
+    .replaceAll("{{AWAY_TEAM}}", escapeHtml(match.away_team_name))
     .replaceAll("{{HOME_LOGO_URL}}", teamLogoUrl(match.home_id))
     .replaceAll("{{AWAY_LOGO_URL}}", teamLogoUrl(match.away_id))
     .replaceAll("{{LEAGUE_LOGO_URL}}", match.league_logo_url)
@@ -129,12 +129,12 @@ function buildMatchSceneHtml(match: MatchRow, index: number): string {
             <img class="app-icon" src="${APP_ICON_URL}" alt="" />
           </div>
           <div class="home-row">
-            <img class="home-logo" src="${teamLogoUrl(match.home_id)}" alt="${escapeHtml(match.home_team)}" />
-            <span class="home-name">${escapeHtml(match.home_team)}</span>
+            <img class="home-logo" src="${teamLogoUrl(match.home_id)}" alt="${escapeHtml(match.home_team_name)}" />
+            <span class="home-name">${escapeHtml(match.home_team_name)}</span>
           </div>
           <div class="away-row">
-            <img class="away-logo" src="${teamLogoUrl(match.away_id)}" alt="${escapeHtml(match.away_team)}" />
-            <span class="away-name">${escapeHtml(match.away_team)}</span>
+            <img class="away-logo" src="${teamLogoUrl(match.away_id)}" alt="${escapeHtml(match.away_team_name)}" />
+            <span class="away-name">${escapeHtml(match.away_team_name)}</span>
           </div>
           <div class="divider-rule"></div>
           <span class="kickoff-time">${kickoffTime}</span>
