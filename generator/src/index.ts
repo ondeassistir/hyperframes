@@ -4,10 +4,36 @@ import type { MatchRow } from "./supabase.js";
 import { renderMatch, renderLeagueReel, leagueReelStorageName } from "./render.js";
 import { uploadReel } from "./upload.js";
 
-async function run() {
-  console.log("[generator] Starting match reel generation...");
+function parseCliArgs() {
+  const args = process.argv.slice(2);
+  let leagueId: number | undefined;
+  let date: string | undefined;
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === "--league" && args[i + 1]) leagueId = Number(args[++i]);
+    if (args[i] === "--date" && args[i + 1]) date = args[++i];
+  }
+  if (leagueId !== undefined && Number.isNaN(leagueId)) {
+    console.error("[generator] --league must be a numeric league ID");
+    process.exit(1);
+  }
+  if (date !== undefined && !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+    console.error("[generator] --date must be in YYYY-MM-DD format");
+    process.exit(1);
+  }
+  return { leagueId, date };
+}
 
-  const matches = await fetchUpcomingMatches();
+async function run() {
+  const { leagueId, date } = parseCliArgs();
+
+  const modeDesc = [
+    leagueId ? `league=${leagueId}` : null,
+    date ? `date=${date}` : null,
+  ].filter(Boolean).join(", ");
+
+  console.log(`[generator] Starting match reel generation${modeDesc ? ` (${modeDesc})` : ""}...`);
+
+  const matches = await fetchUpcomingMatches({ leagueId, date });
 
   if (matches.length === 0) {
     console.log("[generator] No upcoming matches with broadcasts found. Done.");
